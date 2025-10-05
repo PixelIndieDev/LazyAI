@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.pixelindiedev.lazy_ai_pixelindiedev.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AgressiveDisableTicking",
+    "DestroyEggGoalMixin",
+    "EntityNavigationMixin",
+    "LookAroundGoalMixin",
+    "LookAtEntityGoalMixin",
+    "MeleeAttackGoalMixin",
+    "TemptGoalmixin",
+    "WanderAroundGoalMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
