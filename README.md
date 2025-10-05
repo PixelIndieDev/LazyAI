@@ -7,7 +7,7 @@ Lazy AI optimizes Minecraft’s AI calculations to improve performance with as m
 Lazy AI dynamically reduces the frequency and precision of mob AI calculations based on their distance from players. Mobs close to players behave normally, while those farther away update their goals, pathfinding, and other goals less often. This ensures smoother performance, especially in mob-heavy worlds.
 
 > [!IMPORTANT]
-> Lazy AI bases its distance calculations of the simulation distance of your game
+> Lazy AI bases its distance calculations of the simulation distance * *distance scaling* of your game
 
 > [!WARNING]
 > Lazy AI requires [fabric api](https://modrinth.com/mod/fabric-api)
@@ -29,7 +29,7 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 - **Distance-based AI scaling** | *Reduces AI updates for mobs that are far from players*
 - **Pathfinding optimization** | *Simplifies A** *path calculations at long distances*
 - **Reduced goal frequency** | *Look, wander, and tempt goals run less often when distant*
-- **Configurable behavior** | *Easily balance performance and gameplay through a simple config accessible thru [mod menu](https://modrinth.com/mod/modmenu)*
+- **Configurable behavior** | *Easily balance performance and gameplay through a simple config accessible through [mod menu](https://modrinth.com/mod/modmenu)*
 - **Server-wide improvement** | *Decreases tick load even on servers*
 
 ## Settings
@@ -51,7 +51,7 @@ Yes, this mod can improve your TPS.
 You need Fabric
 
 ### I installed the mod, but didn't see as much difference?
-The preview images are taken in a stress test situation. It can also be because your simulation distance or this mods DistanceScaling is set too high.
+The preview images are taken in a stress test situation. It can also be because your simulation distance or this mods *distance scaling* is set too high for your use case.
 
 ### Where is the config located?
 .minecraft/config/lazy-ai.json
