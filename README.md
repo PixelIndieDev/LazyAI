@@ -12,6 +12,10 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 > [!WARNING]
 > Lazy AI requires [fabric api](https://modrinth.com/mod/fabric-api)
 
+## Download
+- **[Modrinth](https://modrinth.com/mod/lazyai)**
+- **[Curseforge](https://www.curseforge.com/minecraft/mc-mods/lazyai)**
+
 ## Performance difference
 ### Vanilla performance
 ![Vanilla performance](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Vanilla.png?raw=true)
