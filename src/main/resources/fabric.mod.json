@@ -4,7 +4,9 @@
   "version": "${version}",
   "name": "Lazy AI",
   "description": "Optimizes Minecraft mob AI by scaling calculations based on distance to players, improving performance with as minimal gameplay impact as possible",
-  "authors": ["PixelIndieDev"],
+  "authors": [
+    "PixelIndieDev"
+  ],
   "contact": {
     "homepage": "https://modrinth.com/mod/lazyai",
     "sources": "https://github.com/PixelIndieDev/LazyAI",

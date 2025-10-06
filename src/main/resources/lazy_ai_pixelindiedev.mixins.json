@@ -5,12 +5,20 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AgressiveDisableTicking",
+    "AttackGoalMixin",
     "DestroyEggGoalMixin",
     "EntityNavigationMixin",
+    "FleeEntityGoalMixin",
+    "FollowMobGoalMixin",
+    "GhastShootFireballGoalMixin",
     "LookAroundGoalMixin",
     "LookAtEntityGoalMixin",
     "MeleeAttackGoalMixin",
+    "MoveThroughVillageGoalMixin",
+    "MoveToTargetPosGoalMixin",
+    "SwimGoalMixin",
     "TemptGoalmixin",
+    "UniversalAngerGoalmixin",
     "WanderAroundGoalMixin"
   ],
   "client": [

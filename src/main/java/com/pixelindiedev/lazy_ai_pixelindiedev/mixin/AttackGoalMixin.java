@@ -2,10 +2,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import net.minecraft.entity.ai.pathing.EntityNavigation;
+import net.minecraft.entity.ai.goal.AttackGoal;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,35 +11,30 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = EntityNavigation.class, priority = 1004)
-public class EntityNavigationMixin {
-    private final static int[] cooldowns = {1, 12, 80};  // Cooldowns from close to far, in ticks
-    private final static int[] cooldownsAgressive = {1, 25, 120};
-    private final static int[] cooldownsMinimal = {1, 5, 20};
-    @Unique
-    private World world;
+@Mixin(value = AttackGoal.class, priority = 1001)
+public class AttackGoalMixin {
+    private final static int[] cooldowns = {10, 25, 50};  // Cooldowns from close to far, in ticks
+    private final static int[] cooldownsAgressive = {15, 30, 60};
+    private final static int[] cooldownsMinimal = {5, 15, 40};
     @Unique
     private MobEntity mob;
     @Unique
     private int cooldown = 0;
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
+    @Unique
+    private int[] temparray = new int[3];
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void captureMob(MobEntity entity, World world, CallbackInfo ci) {
-        this.mob = entity;
-        this.world = world;
+    private void captureMob(MobEntity mob, CallbackInfo ci) {
+        this.mob = mob;
     }
 
-    @Inject(method = "shouldRecalculatePath", at = @At("HEAD"), cancellable = true)
-    private void ThrottleEntityNav(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (((world.getTime() + mob.getId()) % 2) != 0L) {
-            cir.setReturnValue(false);
-        }
-
+    @Inject(method = "canStart", at = @At("HEAD"), cancellable = true)
+    private void throttleCanStart(CallbackInfoReturnable<Boolean> cir) {
         DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(mob);
 
-        int[] temparray = getCooldownList();
+        temparray = getCooldownList();
         if (newDistanceType != previousDistanceType) {
             cooldown = temparray[newDistanceType.ordinal()] - (temparray[previousDistanceType.ordinal()] - cooldown);
             previousDistanceType = newDistanceType;
@@ -53,6 +46,13 @@ public class EntityNavigationMixin {
         } else {
             cooldown = temparray[newDistanceType.ordinal()];
         }
+    }
+
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    private void throttleTick(CallbackInfo ci) {
+        if (temparray == null) return;
+
+        if ((mob.age + mob.getId()) % temparray[2] != 0) ci.cancel();
     }
 
     private int[] getCooldownList() {

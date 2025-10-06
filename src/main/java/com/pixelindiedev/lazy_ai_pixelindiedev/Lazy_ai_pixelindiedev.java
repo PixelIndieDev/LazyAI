@@ -88,6 +88,10 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         return CONFIG.DisableZombieEggStomping;
     }
 
+    public static int getServerTick() {
+        return lastTick;
+    }
+
     @Override
     public void onInitialize() {
         ServerTickEvents.START_SERVER_TICK.register(Lazy_ai_pixelindiedev::onServerTick);
