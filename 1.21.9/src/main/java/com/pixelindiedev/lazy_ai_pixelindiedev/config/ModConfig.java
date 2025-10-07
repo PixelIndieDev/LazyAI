@@ -80,8 +80,9 @@ public class ModConfig {
 
         if (changed) {
             config.save();
-            config.lastModified = configFile.lastModified();
         }
+
+        config.lastModified = configFile.lastModified();
 
         return config;
     }
@@ -116,3 +117,4 @@ public class ModConfig {
         return getMultiplierUsingDistanceScaling(5);
     }
 }
+
