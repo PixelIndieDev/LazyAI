@@ -15,7 +15,7 @@ public class ModConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "lazy-ai.json";
     private static final Logger LOGGER = LoggerFactory.getLogger("LazyAI");
-    private static final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
+    public static final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
     public DistanceScalingType DistanceScaling = DistanceScalingType.Medium;
     public OptimalizationType AIOptimizationType = OptimalizationType.Default;
     //    Distance in squared blocks
@@ -23,7 +23,7 @@ public class ModConfig {
     public int BlockDistance_Far = 196;
     public TemptDelayEnum TemptDelay = TemptDelayEnum.Low;
     public boolean DisableZombieEggStomping = false;
-    private transient long lastModified = 0L;
+    public transient long lastModified = 0L;
 
     public static ModConfig load() {
         ModConfig config = new ModConfig();
@@ -80,9 +80,8 @@ public class ModConfig {
 
         if (changed) {
             config.save();
+            config.lastModified = configFile.lastModified();
         }
-
-        config.lastModified = configFile.lastModified();
 
         return config;
     }
@@ -117,4 +116,3 @@ public class ModConfig {
         return getMultiplierUsingDistanceScaling(5);
     }
 }
-

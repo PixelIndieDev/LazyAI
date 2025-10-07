@@ -8,6 +8,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.UUID;
@@ -20,6 +22,8 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     private static int lastTick = -1;
 
     public static void onServerTick(MinecraftServer server) {
+        if (CONFIG.lastModified == 0L) CONFIG.lastModified = ModConfig.configFile.lastModified();
+
         int currentTick = server.getTicks();
 
         if (currentTick != lastTick) {
