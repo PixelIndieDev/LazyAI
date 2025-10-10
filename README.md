@@ -44,9 +44,6 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 
 ![Lazy AI settings menu)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_LazyAI_settings.png?raw=true)
 
-## Compatibility
-Minecraft: 1.21.6 — 1.21.8
-
 ## FAQ
 ### Can this mod increase my TPS?
 Yes, this mod can improve your TPS.
