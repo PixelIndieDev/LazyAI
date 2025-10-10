@@ -14,12 +14,14 @@
     "LookAroundGoalMixin",
     "LookAtEntityGoalMixin",
     "MeleeAttackGoalMixin",
+    "MoveItemsTaskMixin",
     "MoveThroughVillageGoalMixin",
     "MoveToTargetPosGoalMixin",
     "SwimGoalMixin",
     "TemptGoalmixin",
     "UniversalAngerGoalmixin",
-    "WanderAroundGoalMixin"
+    "WanderAroundGoalMixin",
+    "integration.MoveItemsTaskAccessor"
   ],
   "client": [
   ],

@@ -28,8 +28,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modCompileOnly "com.terraformersmc:modmenu:15.0.0"
-    modRuntimeOnly "com.terraformersmc:modmenu:15.0.0"
+    modCompileOnly "com.terraformersmc:modmenu:16.0.0-rc.1"
+    modRuntimeOnly "com.terraformersmc:modmenu:16.0.0-rc.1"
 }
 
 processResources {
