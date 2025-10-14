@@ -14,8 +14,8 @@ public class ModConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "lazy-ai.json";
-    private static final Logger LOGGER = LoggerFactory.getLogger("LazyAI");
     public static final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
+    private static final Logger LOGGER = LoggerFactory.getLogger("LazyAI");
     public DistanceScalingType DistanceScaling = DistanceScalingType.Medium;
     public OptimalizationType AIOptimizationType = OptimalizationType.Default;
     //    Distance in squared blocks
