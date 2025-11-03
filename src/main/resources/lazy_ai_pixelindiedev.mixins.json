@@ -1,0 +1,33 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.pixelindiedev.lazy_ai_pixelindiedev.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AgressiveDisableTicking",
+    "AttackGoalMixin",
+    "DestroyEggGoalMixin",
+    "EntityNavigationMixin",
+    "FleeEntityGoalMixin",
+    "FollowMobGoalMixin",
+    "GhastShootFireballGoalMixin",
+    "LookAroundGoalMixin",
+    "LookAtEntityGoalMixin",
+    "MeleeAttackGoalMixin",
+    "MobPushingMixin",
+    "MoveThroughVillageGoalMixin",
+    "MoveToTargetPosGoalMixin",
+    "SwimGoalMixin",
+    "TemptGoalmixin",
+    "UniversalAngerGoalmixin",
+    "WanderAroundGoalMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
