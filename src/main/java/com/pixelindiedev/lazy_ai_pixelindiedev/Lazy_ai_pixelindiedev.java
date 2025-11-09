@@ -77,6 +77,10 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         return CONFIG.DisableZombieEggStomping;
     }
 
+    public static boolean getNeverSlowdownDistantMobs() {
+        return CONFIG.NeverSlowdownDistantMobs;
+    }
+
     public static int getServerTick() {
         return lastTick;
     }
