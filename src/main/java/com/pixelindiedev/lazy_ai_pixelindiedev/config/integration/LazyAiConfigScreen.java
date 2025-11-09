@@ -64,6 +64,15 @@ public class LazyAiConfigScreen extends Screen {
             config.save();
         }).dimensions(width / 2 - 100, y, 200, 20).build());
 
+        y += 25;
+
+        addDrawableChild(ButtonWidget.builder(Text.literal("Never Slow Down Distant Mobs: " + config.NeverSlowdownDistantMobs), (btn) ->
+        {
+            config.NeverSlowdownDistantMobs = !config.NeverSlowdownDistantMobs;
+            btn.setMessage(Text.literal("Never Slow Down Distant Mobs: " + config.NeverSlowdownDistantMobs));
+            config.save();
+        }).dimensions(width / 2 - 100, y, 200, 20).build());
+
         y += 30;
 
         addDrawableChild(ButtonWidget.builder(Text.literal("Done"), (btn) -> MinecraftClient.getInstance().setScreen(parent)).dimensions(width / 2 - 100, y, 200, 20).build());

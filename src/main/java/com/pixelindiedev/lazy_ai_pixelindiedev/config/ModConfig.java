@@ -23,6 +23,7 @@ public class ModConfig {
     public int BlockDistance_Far = 196;
     public TemptDelayEnum TemptDelay = TemptDelayEnum.Low;
     public boolean DisableZombieEggStomping = false;
+    public boolean NeverSlowdownDistantMobs = false;
     public transient long lastModified = 0L;
 
     public static ModConfig load() {
@@ -73,6 +74,11 @@ public class ModConfig {
         if (!obj.has("DisableZombieEggStomping")) {
             LOGGER.warn("Missing option 'DisableZombieEggStomping', adding default (false).");
             obj.addProperty("DisableZombieEggStomping", false);
+            changed = true;
+        }
+        if (!obj.has("NeverSlowdownDistantMobs")) {
+            LOGGER.warn("Missing option 'NeverSlowdownDistantMobs', adding default (false).");
+            obj.addProperty("NeverSlowdownDistantMobs", false);
             changed = true;
         }
 
