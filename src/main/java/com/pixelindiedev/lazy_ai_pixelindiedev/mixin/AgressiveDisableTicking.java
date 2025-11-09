@@ -32,6 +32,8 @@ public abstract class AgressiveDisableTicking extends LivingEntity {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void ThrottleWholeAI(CallbackInfo ci) {
+        if (Lazy_ai_pixelindiedev.getNeverSlowdownDistantMobs()) return;
+
         if (mob == null) mob = (MobEntity) (Object) this;
 
         if ((this.age + aiTickOffset) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
