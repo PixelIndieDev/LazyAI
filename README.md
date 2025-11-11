@@ -41,6 +41,8 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 - **Distance Scaling** | *This setting controls what % range of your simulation distance is considered close and far range*
 - **Mob Tempting Delay** | *This setting controls how much delay animals have to being tempted by an item*
 - **Disable Zombie Egg Stomping** | *This setting controls the prevention of zombies wanting to destroy turtle eggs*
+### Available from version 1.3.2+
+- **Never Slow Down Distant Mobs** | *This setting controls if distant mobs should never slow down. Enabling this reduces the mod's TPS-boosting effect on your game, but will fix large (multiply chunks large) mob farms slowing down production.*
 
 ![Lazy AI settings menu)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_LazyAI_settings.png?raw=true)
 
