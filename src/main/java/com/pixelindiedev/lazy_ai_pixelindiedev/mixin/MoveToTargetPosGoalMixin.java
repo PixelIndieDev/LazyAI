@@ -55,7 +55,7 @@ public class MoveToTargetPosGoalMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void reduceTickLoad(CallbackInfo ci) {
-        if (temparray == null) return;
+        if (temparray == null || temparray[2] == 0) return;
 
         if ((mob.age + mob.getId()) % temparray[2] != 0) ci.cancel();
     }
