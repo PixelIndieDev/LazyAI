@@ -63,7 +63,7 @@ public class FleeEntityGoalMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void reduceTickFrequency(CallbackInfo ci) {
-        if (temparray == null) return;
+        if (temparray == null || temparray[2] == 0) return;
 
         if ((mob.age + mob.getId()) % temparray[2] != 0) ci.cancel();
     }
