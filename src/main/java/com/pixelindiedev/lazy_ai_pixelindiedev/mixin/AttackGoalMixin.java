@@ -23,7 +23,7 @@ public class AttackGoalMixin {
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
     @Unique
-    private int[] temparray = new int[3];
+    private int[] temparray;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void captureMob(MobEntity mob, CallbackInfo ci) {

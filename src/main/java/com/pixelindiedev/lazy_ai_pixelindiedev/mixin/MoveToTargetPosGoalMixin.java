@@ -24,7 +24,7 @@ public class MoveToTargetPosGoalMixin {
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
     @Unique
-    private int[] temparray = new int[3];
+    private int[] temparray;
 
     @Inject(method = "<init>(Lnet/minecraft/entity/mob/PathAwareEntity;DI)V", at = @At("RETURN"))
     private void captureMob(PathAwareEntity mob, double speed, int range, CallbackInfo ci) {
