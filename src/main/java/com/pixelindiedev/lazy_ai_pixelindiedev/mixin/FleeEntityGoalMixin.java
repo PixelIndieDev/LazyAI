@@ -26,7 +26,7 @@ public class FleeEntityGoalMixin {
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
     @Unique
-    private int[] temparray = new int[3];
+    private int[] temparray;
 
     @Inject(method = "<init>(Lnet/minecraft/entity/mob/PathAwareEntity;Ljava/lang/Class;FDD)V", at = @At("RETURN"))
     private void captureMob(PathAwareEntity mob, Class fleeFromType, float distance, double slowSpeed, double fastSpeed, CallbackInfo ci) {
