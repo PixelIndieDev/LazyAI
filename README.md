@@ -20,11 +20,12 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 ### Vanilla performance
 ![Vanilla performance](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Vanilla.png?raw=true)
 
+**Using AI Optimization Type 'Dynamic' will dynamically switch between the three optimization modes based on TPS**
 ### Lazy AI performance (using AIOptimizationType = Minimal)
 ![Lazy AI performance (using AIOptimizationType = Minimal)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Minimal.png?raw=true)
 
-### Lazy AI performance (using AIOptimizationType = Default)
-![Lazy AI performance (using AIOptimizationType = Default)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Default.png?raw=true)
+### Lazy AI performance (using AIOptimizationType = Moderate)
+![Lazy AI performance (using AIOptimizationType = Moderate)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Default.png?raw=true)
 
 ### Lazy AI performance (using AIOptimizationType = Aggressive)
 ![Lazy AI performance (using AIOptimizationType = Aggressive)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Aggressive.png?raw=true)
