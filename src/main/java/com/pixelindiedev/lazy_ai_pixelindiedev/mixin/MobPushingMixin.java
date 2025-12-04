@@ -11,13 +11,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.getDistance;
-import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.getOptimalizationType;
+import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.*;
 
 @Mixin(LivingEntity.class)
 public class MobPushingMixin {
     @Unique
     private boolean shouldDisable() {
+        if (EnableCriticalTPSMode) return true;
+
         LivingEntity entity = (LivingEntity) (Object) this;
 
         if (entity instanceof PlayerEntity) return false;
