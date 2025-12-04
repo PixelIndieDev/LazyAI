@@ -11,19 +11,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ModConfig {
-
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "lazy-ai.json";
     public static final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
     private static final Logger LOGGER = LoggerFactory.getLogger("LazyAI");
-    public DistanceScalingType DistanceScaling = DistanceScalingType.Medium;
-    public OptimalizationType AIOptimizationType = OptimalizationType.Default;
+    public DistanceScalingType DistanceScaling = ModConfigDefaults.Defaults_DistanceScaling;
+    public OptimalizationType AIOptimizationType = ModConfigDefaults.Defaults_AIOptimizationType;
     //    Distance in squared blocks
-    public int BlockDistance_Close = 64;
-    public int BlockDistance_Far = 196;
-    public TemptDelayEnum TemptDelay = TemptDelayEnum.Low;
-    public boolean DisableZombieEggStomping = false;
-    public boolean NeverSlowdownDistantMobs = false;
+    //    distance is based on simulation distance
+    public int BlockDistance_Close = ModConfigDefaults.Defaults_BlockDistance_Close;
+    public int BlockDistance_Far = ModConfigDefaults.Defaults_BlockDistance_Far;
+    public TemptDelayEnum TemptDelay = ModConfigDefaults.Defaults_TemptDelay;
+    public boolean DisableZombieEggStomping = ModConfigDefaults.Defaults_DisableZombieEggStomping;
+    public boolean NeverSlowdownDistantMobs = ModConfigDefaults.Defaults_NeverSlowdownDistantMobs;
     public transient long lastModified = 0L;
 
     public static ModConfig load() {
@@ -47,42 +47,69 @@ public class ModConfig {
 
         // Check for missing options
         if (!obj.has("DistanceScaling")) {
-            LOGGER.warn("Missing option 'DistanceScaling', adding default (Medium).");
-            obj.addProperty("DistanceScaling", DistanceScalingType.Medium.name());
+            var value = ModConfigDefaults.Defaults_DistanceScaling.name();
+            LOGGER.warn("Missing option 'DistanceScaling', adding default (" + value + ").");
+            obj.addProperty("DistanceScaling", value);
             changed = true;
         }
         if (!obj.has("AIOptimizationType")) {
-            LOGGER.warn("Missing option 'AIOptimizationType', adding default (Default).");
-            obj.addProperty("AIOptimizationType", OptimalizationType.Default.name());
+            var value = ModConfigDefaults.Defaults_AIOptimizationType.name();
+            LOGGER.warn("Missing option 'AIOptimizationType', adding default (" + value + ").");
+            obj.addProperty("AIOptimizationType", value);
             changed = true;
         }
         if (!obj.has("BlockDistance_Close")) {
-            LOGGER.warn("Missing option 'BlockDistance_Close', adding default (64).");
-            obj.addProperty("BlockDistance_Close", 64);
+            var value = ModConfigDefaults.Defaults_BlockDistance_Close;
+            LOGGER.warn("Missing option 'BlockDistance_Close', adding default (" + value + ").");
+            obj.addProperty("BlockDistance_Close", value);
             changed = true;
         }
         if (!obj.has("BlockDistance_Far")) {
-            LOGGER.warn("Missing option 'BlockDistance_Far', adding default (196).");
-            obj.addProperty("BlockDistance_Far", 196);
+            var value = ModConfigDefaults.Defaults_BlockDistance_Far;
+            LOGGER.warn("Missing option 'BlockDistance_Far', adding default (" + value + ").");
+            obj.addProperty("BlockDistance_Far", value);
             changed = true;
         }
         if (!obj.has("TemptDelay")) {
-            LOGGER.warn("Missing option 'TemptDelay', adding default (Low).");
-            obj.addProperty("TemptDelay", TemptDelayEnum.Low.name());
+            var value = ModConfigDefaults.Defaults_TemptDelay.name();
+            LOGGER.warn("Missing option 'TemptDelay', adding default (" + value + ").");
+            obj.addProperty("TemptDelay", value);
             changed = true;
         }
         if (!obj.has("DisableZombieEggStomping")) {
-            LOGGER.warn("Missing option 'DisableZombieEggStomping', adding default (false).");
-            obj.addProperty("DisableZombieEggStomping", false);
+            var value = ModConfigDefaults.Defaults_DisableZombieEggStomping;
+            LOGGER.warn("Missing option 'DisableZombieEggStomping', adding default (" + value + ").");
+            obj.addProperty("DisableZombieEggStomping", value);
             changed = true;
         }
         if (!obj.has("NeverSlowdownDistantMobs")) {
-            LOGGER.warn("Missing option 'NeverSlowdownDistantMobs', adding default (false).");
-            obj.addProperty("NeverSlowdownDistantMobs", false);
+            var value = ModConfigDefaults.Defaults_NeverSlowdownDistantMobs;
+            LOGGER.warn("Missing option 'NeverSlowdownDistantMobs', adding default (" + value + ").");
+            obj.addProperty("NeverSlowdownDistantMobs", value);
             changed = true;
         }
 
         config = GSON.fromJson(obj, ModConfig.class);
+
+        //Null check
+        if (config.DistanceScaling == null) {
+            var value = ModConfigDefaults.Defaults_DistanceScaling;
+            LOGGER.warn("Invalid DistanceScaling value in config, using default (" + value + ").");
+            config.DistanceScaling = value;
+            changed = true;
+        }
+        if (config.AIOptimizationType == null) {
+            var value = ModConfigDefaults.Defaults_AIOptimizationType;
+            LOGGER.warn("Invalid AIOptimizationType value in config, using default (" + value + ").");
+            config.AIOptimizationType = value;
+            changed = true;
+        }
+        if (config.TemptDelay == null) {
+            var value = ModConfigDefaults.Defaults_TemptDelay;
+            LOGGER.warn("Invalid TemptDelay value, using default (" + value + ").");
+            config.TemptDelay = value;
+            changed = true;
+        }
 
         if (changed) {
             config.save();

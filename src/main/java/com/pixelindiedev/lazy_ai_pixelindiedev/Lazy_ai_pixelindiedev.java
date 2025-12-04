@@ -14,15 +14,39 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Lazy_ai_pixelindiedev implements ModInitializer {
-
     private static final Map<UUID, DistanceType> cache = new ConcurrentHashMap<>();
     public static ModConfig CONFIG;
+    public static boolean EnableCriticalTPSMode = false;
+    private static float Server_TPS_MS = 50.0f; //in ms
     private static int lastTick = -1;
 
     public static void onServerTick(MinecraftServer server) {
         if (CONFIG.lastModified == 0L) CONFIG.lastModified = ModConfig.configFile.lastModified();
 
         int currentTick = server.getTicks();
+
+        // Calculate TPS
+        if (CONFIG.AIOptimizationType == OptimalizationType.Dynamic) {
+            if (currentTick % 10 == 0) {
+                long[] tickTimes = server.lastTickLengths; //Always returns 100 values, so no valid check is needed
+                long sum = 0;
+                float tickTimesLength = 0.0f;
+                for (long time : tickTimes) {
+                    if (time > 0.0) {
+                        sum += time;
+                        tickTimesLength++;
+                    }
+                }
+
+                float MSPerTick;
+                if (sum <= 0.0) MSPerTick = 58.8f; //Make it use the default setting temporarily before it has the valid tick times
+                else MSPerTick = (sum / tickTimesLength) * 1.0e-6f;
+
+                Server_TPS_MS = MSPerTick;
+            }
+
+            EnableCriticalTPSMode = Server_TPS_MS > 76.92f;
+        }
 
         if (currentTick != lastTick) {
             cache.clear();
@@ -37,10 +61,11 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     public static DistanceType GetClosestPlayerDistance(MobEntity mob) {
         if (mob == null) return DistanceType.FarRange;
 
-        PlayerEntity closestPlayer = mob.getWorld().getClosestPlayer(mob, CONFIG.BlockDistance_Far);
+        PlayerEntity closestPlayer = mob.getEntityWorld().getClosestPlayer(mob, CONFIG.BlockDistance_Far);
         if (closestPlayer == null) return DistanceType.FarRange;
 
         double distancebetween = mob.squaredDistanceTo(closestPlayer);
+
         if (distancebetween >= CONFIG.BlockDistance_Far) {
             return DistanceType.FarRange;
         } else if (distancebetween >= CONFIG.BlockDistance_Close) {
@@ -51,7 +76,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     }
 
     public static DistanceType getDistance(MobEntity mob) {
-        if (mob == null || mob.getWorld() == null) return DistanceType.FarRange;
+        if (mob == null || mob.getEntityWorld() == null) return DistanceType.FarRange;
 
         return cache.computeIfAbsent(mob.getUuid(), id -> GetClosestPlayerDistance(mob));
     }
@@ -70,7 +95,11 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     }
 
     public static OptimalizationType getOptimalizationType() {
-        return CONFIG.AIOptimizationType;
+        if (CONFIG.AIOptimizationType == OptimalizationType.Dynamic) {
+            if (Server_TPS_MS <= 50.51f) return OptimalizationType.Minimal;
+            else if (Server_TPS_MS <= 62.5f) return OptimalizationType.Moderate;
+            else return OptimalizationType.Agressive;
+        } else return CONFIG.AIOptimizationType;
     }
 
     public static boolean getDisableZombieEggStomping() {
