@@ -39,7 +39,8 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
                 }
 
                 float MSPerTick;
-                if (sum <= 0.0) MSPerTick = 58.8f; //Make it use the default setting temporarily before it has the valid tick times
+                if (sum <= 0.0)
+                    MSPerTick = 58.8f; //Make it use the default setting temporarily before it has the valid tick times
                 else MSPerTick = (sum / tickTimesLength) * 1.0e-6f;
 
                 Server_TPS_MS = MSPerTick;

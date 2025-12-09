@@ -36,9 +36,9 @@
     "modmenu": "*"
   },
   "depends": {
-    "fabricloader": ">=${loader_version}",
+    "fabricloader": ">=0.18.0",
     "fabric": "*",
-    "minecraft": ">=1.21.9"
+    "minecraft": "1.21.11"
   },
   "custom": {
     "modmenu": {
