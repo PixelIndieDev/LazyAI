@@ -18,9 +18,9 @@ public class GhastShootFireballGoalMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void throttleFireballTick(CallbackInfo ci) {
-        if (mobAITweaksIsInstalled) {
+        if (!mobAITweaksIsInstalled) {
+            if ((Lazy_ai_pixelindiedev.getServerTick() % cooldownServerTick) != 0) ci.cancel();
         }
-        else if ((Lazy_ai_pixelindiedev.getServerTick() % cooldownServerTick) != 0) ci.cancel();
     }
 
     @ModifyExpressionValue(method = "tick", at = @At(value = "CONSTANT", args = "intValue=10"))

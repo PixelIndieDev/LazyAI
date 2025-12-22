@@ -28,6 +28,7 @@ public abstract class AgressiveDisableTicking extends LivingEntity {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void assignOffset(EntityType<?> type, World world, CallbackInfo ci) {
         this.aiTickOffset = this.getId() % getCooldownList()[2];
+        this.mob = (MobEntity) (Object) this;
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
