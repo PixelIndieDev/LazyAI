@@ -20,7 +20,6 @@ public class LookAroundGoalMixin {
     @Shadow
     @Final
     private MobEntity mob;
-
     @Unique
     private int cooldown = 0;
     @Unique
