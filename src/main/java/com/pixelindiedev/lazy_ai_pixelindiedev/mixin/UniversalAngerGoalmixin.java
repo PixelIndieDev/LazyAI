@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = UniversalAngerGoal.class, priority = 1001)
@@ -21,6 +22,11 @@ public class UniversalAngerGoalmixin {
     private int cooldown = 0;
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void captureMob(MobEntity mob, boolean triggerOthers, CallbackInfo ci) {
+        this.mob = mob;
+    }
 
     @Inject(method = "canStart", at = @At("HEAD"), cancellable = true)
     private void TrotthleAngerChecks(CallbackInfoReturnable<Boolean> cir) {

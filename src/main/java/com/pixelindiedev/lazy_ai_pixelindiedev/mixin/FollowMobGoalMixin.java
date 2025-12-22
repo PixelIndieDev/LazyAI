@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = FollowMobGoal.class, priority = 1001)
@@ -21,6 +22,11 @@ public class FollowMobGoalMixin {
     private int cooldown = 0;
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void captureMob(MobEntity mob, double speed, float minDistance, float maxDistance, CallbackInfo ci) {
+        this.mob = mob;
+    }
 
     @Inject(method = "canStart", at = @At("HEAD"), cancellable = true)
     private void throttleFollowMob(CallbackInfoReturnable<Boolean> cir) {
