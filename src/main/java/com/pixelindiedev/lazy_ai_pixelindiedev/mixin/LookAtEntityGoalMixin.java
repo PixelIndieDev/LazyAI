@@ -20,7 +20,6 @@ public class LookAtEntityGoalMixin {
     @Shadow
     @Final
     protected MobEntity mob;
-
     @Unique
     private int cooldown = 0;
     @Unique
