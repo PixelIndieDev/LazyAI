@@ -5,9 +5,11 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.config.ModConfig;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Map;
 import java.util.UUID;
@@ -113,6 +115,13 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
 
     public static int getServerTick() {
         return lastTick;
+    }
+
+    public static MobEntity GetMobEntity(LivingEntity entity) {
+        if (entity != null) {
+            if (entity instanceof MobEntity mob) return (MobEntity) mob;
+            else return null;
+        } else return null;
     }
 
     @Override
