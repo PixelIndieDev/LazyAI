@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.GetMobEntity;
+
 @Mixin(value = MobEntity.class, priority = 1010)
 public abstract class AgressiveDisableTicking extends LivingEntity {
     private final static int[] cooldowns = {1, 1, 2};  // Cooldowns from close to far, in ticks
@@ -28,14 +30,14 @@ public abstract class AgressiveDisableTicking extends LivingEntity {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void assignOffset(EntityType<?> type, World world, CallbackInfo ci) {
         this.aiTickOffset = this.getId() % getCooldownList()[2];
-        this.mob = (MobEntity) (Object) this;
+        this.mob = GetMobEntity(this);
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void ThrottleWholeAI(CallbackInfo ci) {
         if (Lazy_ai_pixelindiedev.getNeverSlowdownDistantMobs()) return;
 
-        if (mob == null) mob = (MobEntity) (Object) this;
+        if (mob == null) return;
 
         if ((this.age + aiTickOffset) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
             ci.cancel();

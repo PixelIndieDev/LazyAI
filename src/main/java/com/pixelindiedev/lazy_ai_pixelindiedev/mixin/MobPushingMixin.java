@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -15,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.EnableCriticalTPSMode;
+import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.GetMobEntity;
 
 @Mixin(LivingEntity.class)
 public abstract class MobPushingMixin {
@@ -30,7 +30,7 @@ public abstract class MobPushingMixin {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void captureMob(EntityType entityType, World world, CallbackInfo ci) {
-        this.mob = GetMobEntity();
+        this.mob = GetMobEntity((LivingEntity) (Object) this);
     }
 
     @Inject(method = "pushAwayFrom", at = @At("HEAD"), cancellable = true)
@@ -53,14 +53,6 @@ public abstract class MobPushingMixin {
                 cooldown = temparray[newDistanceType.ordinal()];
             }
         }
-    }
-
-    @Unique
-    private MobEntity GetMobEntity() {
-        LivingEntity entity = (LivingEntity) (Object) this;
-
-        if (entity instanceof PlayerEntity) return null;
-        else return (MobEntity) entity;
     }
 
     private int[] getCooldownList() {
