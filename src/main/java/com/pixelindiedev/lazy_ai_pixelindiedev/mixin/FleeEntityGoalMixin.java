@@ -16,8 +16,11 @@ import java.util.function.Predicate;
 
 @Mixin(value = FleeEntityGoal.class, priority = 1003)
 public class FleeEntityGoalMixin {
+    @Unique
     private final static int[] cooldowns = {10, 20, 40};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {15, 30, 80};
+    @Unique
     private final static int[] cooldownsMinimal = {5, 10, 30};
     @Unique
     private MobEntity mob;
@@ -68,6 +71,7 @@ public class FleeEntityGoalMixin {
         if ((mob.age + mob.getId()) % temparray[2] != 0) ci.cancel();
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;

@@ -15,8 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = EntityNavigation.class, priority = 1004)
 public class EntityNavigationMixin {
+    @Unique
     private final static int[] cooldowns = {1, 12, 80};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {1, 25, 120};
+    @Unique
     private final static int[] cooldownsMinimal = {1, 5, 20};
     @Unique
     private World world;
@@ -55,6 +58,7 @@ public class EntityNavigationMixin {
         }
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;

@@ -14,8 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = MeleeAttackGoal.class, priority = 1003)
 public class MeleeAttackGoalMixin {
+    @Unique
     private final static int[] cooldowns = {5, 10, 20};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {5, 15, 40};
+    @Unique
     private final static int[] cooldownsMinimal = {2, 5, 15};
     @Unique
     private int cooldown = 0;
@@ -47,6 +50,7 @@ public class MeleeAttackGoalMixin {
         }
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;

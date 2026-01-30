@@ -14,8 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = MoveToTargetPosGoal.class, priority = 1001)
 public class MoveToTargetPosGoalMixin {
+    @Unique
     private final static int[] cooldowns = {20, 50, 120};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {40, 80, 300};
+    @Unique
     private final static int[] cooldownsMinimal = {5, 25, 80};
     @Unique
     private MobEntity mob;
@@ -60,6 +63,7 @@ public class MoveToTargetPosGoalMixin {
         if ((mob.age + mob.getId()) % temparray[2] != 0) ci.cancel();
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;

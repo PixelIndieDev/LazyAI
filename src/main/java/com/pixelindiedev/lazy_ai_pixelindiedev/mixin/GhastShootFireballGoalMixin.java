@@ -3,17 +3,21 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "net.minecraft.entity.mob.GhastEntity$ShootFireballGoal", priority = 600)
 public class GhastShootFireballGoalMixin {
+    @Unique
     private final static float cooldown = 0.2f; //original value divided by the cooldown
+    @Unique
     private final static int cooldownServerTick = 5;
 
     // increase tick to not break the ghast animations of the mob-ai-tweaks mod
     // If the ticks are not trottled, don't do any calculations with the constants
+    @Unique
     private static final boolean mobAITweaksIsInstalled = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("mob-ai-tweaks");
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)

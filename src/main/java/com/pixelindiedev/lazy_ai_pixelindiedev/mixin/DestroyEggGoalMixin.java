@@ -15,8 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = StepAndDestroyBlockGoal.class, priority = 1001)
 public class DestroyEggGoalMixin {
+    @Unique
     private final static int[] cooldowns = {40, 100, 200};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {60, 150, 300};
+    @Unique
     private final static int[] cooldownsMinimal = {5, 15, 50};
     @Unique
     private int cooldown = 0;
@@ -53,6 +56,7 @@ public class DestroyEggGoalMixin {
         }
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;
