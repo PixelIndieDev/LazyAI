@@ -9,7 +9,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Map;
 import java.util.UUID;
@@ -119,7 +118,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
 
     public static MobEntity GetMobEntity(LivingEntity entity) {
         if (entity != null) {
-            if (entity instanceof MobEntity mob) return (MobEntity) mob;
+            if (entity instanceof MobEntity mob) return mob;
             else return null;
         } else return null;
     }

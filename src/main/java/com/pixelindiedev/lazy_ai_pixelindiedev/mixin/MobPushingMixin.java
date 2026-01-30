@@ -18,8 +18,11 @@ import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.GetM
 
 @Mixin(LivingEntity.class)
 public abstract class MobPushingMixin {
+    @Unique
     private final static int[] cooldowns = {5, 10, 15};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {10, 15, 25};
+    @Unique
     private final static int[] cooldownsMinimal = {2, 6, 10};
     @Unique
     private int cooldown = 0;
@@ -55,6 +58,7 @@ public abstract class MobPushingMixin {
         }
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;
