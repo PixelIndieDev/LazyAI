@@ -6,13 +6,16 @@
   "mixins": [
     "AgressiveDisableTicking",
     "AttackGoalMixin",
+    "BrainMixin",
     "DestroyEggGoalMixin",
     "EntityNavigationMixin",
     "FleeEntityGoalMixin",
     "FollowMobGoalMixin",
     "GhastShootFireballGoalMixin",
+    "LivingEntityMixin",
     "LookAroundGoalMixin",
     "LookAtEntityGoalMixin",
+    "LookControlMixin",
     "MeleeAttackGoalMixin",
     "MobPushingMixin",
     "MoveThroughVillageGoalMixin",
@@ -20,7 +23,9 @@
     "SwimGoalMixin",
     "TemptGoalmixin",
     "UniversalAngerGoalmixin",
-    "WanderAroundGoalMixin"
+    "VillagerEntityMixin",
+    "WanderAroundGoalMixin",
+    "integration.VillagerEntityAccessor"
   ],
   "client": [
   ],

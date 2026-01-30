@@ -16,8 +16,11 @@ import java.util.function.BooleanSupplier;
 
 @Mixin(value = MoveThroughVillageGoal.class, priority = 1001)
 public class MoveThroughVillageGoalMixin {
+    @Unique
     private final static int[] cooldowns = {20, 50, 120};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {40, 80, 300};
+    @Unique
     private final static int[] cooldownsMinimal = {5, 25, 80};
     @Unique
     private MobEntity mob;
@@ -49,6 +52,7 @@ public class MoveThroughVillageGoalMixin {
         }
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;
