@@ -14,8 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = WanderAroundGoal.class, priority = 1002)
 public class WanderAroundGoalMixin {
+    @Unique
     private final static int[] cooldowns = {1, 4, 8};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {2, 7, 12};
+    @Unique
     private final static int[] cooldownsMinimal = {0, 2, 5};
     @Unique
     private int cooldown = 0;
@@ -57,6 +60,7 @@ public class WanderAroundGoalMixin {
         }
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;
