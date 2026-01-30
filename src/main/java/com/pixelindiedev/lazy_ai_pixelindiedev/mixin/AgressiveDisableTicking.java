@@ -15,8 +15,11 @@ import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.GetM
 
 @Mixin(value = MobEntity.class, priority = 1010)
 public abstract class AgressiveDisableTicking extends LivingEntity {
+    @Unique
     private final static int[] cooldowns = {1, 1, 2};  // Cooldowns from close to far, in ticks
+    @Unique
     private final static int[] cooldownsAgressive = {1, 1, 3};
+    @Unique
     private final static int[] cooldownsMinimal = {1, 1, 1};
     @Unique
     private int aiTickOffset;
@@ -43,6 +46,7 @@ public abstract class AgressiveDisableTicking extends LivingEntity {
             ci.cancel();
     }
 
+    @Unique
     private int[] getCooldownList() {
         return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
             case Minimal -> cooldownsMinimal;
