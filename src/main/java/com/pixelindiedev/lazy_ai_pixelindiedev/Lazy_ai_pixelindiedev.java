@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.initializeCacheAsync;
+
 public class Lazy_ai_pixelindiedev implements ModInitializer {
     private static final Map<UUID, DistanceType> cache = new ConcurrentHashMap<>();
     public static ModConfig CONFIG;
@@ -126,5 +128,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     public void onInitialize() {
         ServerTickEvents.START_SERVER_TICK.register(Lazy_ai_pixelindiedev::onServerTick);
         CONFIG = ModConfig.load();
+
+        initializeCacheAsync();
     }
 }
