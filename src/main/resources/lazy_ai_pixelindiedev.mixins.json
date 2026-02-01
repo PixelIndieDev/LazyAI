@@ -26,6 +26,7 @@
     "UniversalAngerGoalmixin",
     "VillagerEntityMixin",
     "WanderAroundGoalMixin",
+    "WorldMixin",
     "integration.MoveItemsTaskAccessor",
     "integration.VillagerEntityAccessor"
   ],
