@@ -25,6 +25,7 @@
     "UniversalAngerGoalmixin",
     "VillagerEntityMixin",
     "WanderAroundGoalMixin",
+    "WorldMixin",
     "integration.VillagerEntityAccessor"
   ],
   "client": [
