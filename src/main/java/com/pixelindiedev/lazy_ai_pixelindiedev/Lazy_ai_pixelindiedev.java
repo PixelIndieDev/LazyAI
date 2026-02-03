@@ -30,7 +30,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
 
         // Calculate TPS
         if (CONFIG.AIOptimizationType == OptimalizationType.Dynamic) {
-            if (currentTick % 10 == 0) {
+            if ((currentTick & 8) == 0) {
                 long[] tickTimes = server.lastTickLengths; //Always returns 100 values, so no valid check is needed
                 long sum = 0;
                 float tickTimesLength = 0.0f;

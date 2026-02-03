@@ -22,11 +22,10 @@ public class BrainMixin<E extends LivingEntity> {
 
     @Inject(method = "tickSensors", at = @At("HEAD"), cancellable = true)
     private void throttleSensors(ServerWorld world, E entity, CallbackInfo ci) {
-        if (entity instanceof MobEntity mob) {
-            if (world.getTime() % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0) {
-                ci.cancel();
-            }
-        }
+        if (!(entity instanceof MobEntity mob)) return;
+
+        if ((world.getTime() + mob.getId()) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
+            ci.cancel();
     }
 
     @Unique
