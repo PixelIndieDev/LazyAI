@@ -24,11 +24,18 @@ public class LookControlMixin {
     @Shadow
     protected MobEntity entity;
 
+    @Unique
+    private int offset;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void captureMob(MobEntity mob, CallbackInfo ci) {
+        offset = entity.getId();
+    }
+
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTick(CallbackInfo ci) {
-        if (entity.age % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(entity).ordinal()] != 0) {
+        if ((entity.age + offset) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(entity).ordinal()] != 0)
             ci.cancel();
-        }
     }
 
     @Unique

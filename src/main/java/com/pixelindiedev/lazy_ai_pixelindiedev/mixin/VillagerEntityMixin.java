@@ -11,13 +11,10 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.village.VillagerProfession;
-import net.minecraft.village.VillagerType;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -59,8 +56,8 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Shadow
     protected abstract void resetCustomer();
 
-    @Inject(method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;Lnet/minecraft/village/VillagerType;)V", at = @At("RETURN"))
-    private void captureMob(EntityType entityType, World world, VillagerType type, CallbackInfo ci) {
+    @Inject(method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;)V", at = @At("RETURN"))
+    private void captureMob(EntityType entityType, World world, CallbackInfo ci) {
         villager = (VillagerEntity) (Object) this;
         isInTradingHall = false;
         shouldRefreshTradingHall = false;
@@ -88,7 +85,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
         if (villager.hasCustomer()) return;
 
-        if ((villager.age + randomSelectedTick) % 20 != 0) {
+        if (((villager.age + randomSelectedTick) & 31) != 0) {
             VillagerEntityAccessor accessor = (VillagerEntityAccessor) villager;
 
             int tempInt = accessor.getLevelUpTimer();
@@ -102,10 +99,9 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
             }
 
             PlayerEntity lastcust = accessor.getLastCustomer();
-            if (lastcust!= null && villager.getWorld() instanceof ServerWorld) {
-                ServerWorld world = (ServerWorld) villager.getWorld();
+            if (lastcust != null && villager.getWorld() instanceof ServerWorld world) {
                 (world).handleInteraction(EntityInteraction.TRADE, lastcust, villager);
-                world.sendEntityStatus(villager, (byte)14);
+                world.sendEntityStatus(villager, (byte) 14);
                 lastcust = null;
             }
 

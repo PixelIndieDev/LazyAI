@@ -3,8 +3,10 @@ package com.pixelindiedev.lazy_ai_pixelindiedev;
 import it.unimi.dsi.fastutil.objects.Reference2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Reference2BooleanOpenHashMap;
 import net.minecraft.block.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.EmptyBlockView;
 
 public class LazyAI$BlockChecker {
     //this checks for collision on blocks more efficiently than the isSolidBlock() as this checks less accurate, although I don't need the accuracy for what I use it for
@@ -88,6 +90,7 @@ public class LazyAI$BlockChecker {
     }
 
     public static boolean hasSolidCollision(Block block) {
+        if (block == null) return false;
         if (blockSolidCollisionCheckCache.containsKey(block)) return blockSolidCollisionCheckCache.getBoolean(block);
         boolean isSolid = hasCollisionFast(block);
         blockSolidCollisionCheckCache.put(block, isSolid);
@@ -95,6 +98,7 @@ public class LazyAI$BlockChecker {
     }
 
     public static boolean hasSolidCollision(BlockState state) {
+        if (state == null) return false;
         return hasSolidCollision(state.getBlock());
     }
 
@@ -108,9 +112,14 @@ public class LazyAI$BlockChecker {
             return false;
         }
 
-        BlockState defaultState = block.getDefaultState();
-        VoxelShape collisionShape = defaultState.getCollisionShape(null, null);
-        boolean isSolid = !collisionShape.isEmpty() && collisionShape != VoxelShapes.empty();
+        boolean isSolid;
+        try {
+            BlockState defaultState = block.getDefaultState();
+            VoxelShape collisionShape = defaultState.getCollisionShape(EmptyBlockView.INSTANCE, BlockPos.ORIGIN);
+            isSolid = !collisionShape.isEmpty() && collisionShape != VoxelShapes.empty();
+        } catch (Exception e) {
+            isSolid = false;
+        }
 
         blockSolidCollisionCheckCache.put(block, isSolid);
         return isSolid;
