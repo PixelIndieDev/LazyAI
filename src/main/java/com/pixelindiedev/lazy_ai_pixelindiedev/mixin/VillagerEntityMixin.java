@@ -90,7 +90,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
         if (villager.hasCustomer()) return;
 
-        if ((villager.age + randomSelectedTick) % 20 != 0) {
+        if (((villager.age + randomSelectedTick) & 31) != 0) {
             VillagerEntityAccessor accessor = (VillagerEntityAccessor) villager;
 
             int tempInt = accessor.getLevelUpTimer();

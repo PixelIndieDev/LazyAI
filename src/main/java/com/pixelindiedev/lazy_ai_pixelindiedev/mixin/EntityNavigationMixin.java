@@ -38,7 +38,7 @@ public class EntityNavigationMixin {
 
     @Inject(method = "shouldRecalculatePath", at = @At("HEAD"), cancellable = true)
     private void ThrottleEntityNav(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (((world.getTime() + mob.getId()) % 2) != 0L) {
+        if (((world.getTime() + mob.getId()) & 1) != 0L) {
             cir.setReturnValue(false);
         }
 
