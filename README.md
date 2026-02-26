@@ -30,6 +30,14 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 ### Lazy AI performance (using AIOptimizationType = Aggressive)
 ![Lazy AI performance (using AIOptimizationType = Aggressive)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Aggressive.png?raw=true)
 
+## Comparison of Vanilla and LazyAI
+_Lower ms -> better_
+### TPS comparison in a average world
+![Average world TPS test image](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/sideview/LazyAI_Compare01_notitle.png?raw=true)
+
+### TPS comparison in a giant villager trading hall
+![Villager trading hall test image](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/sideview/LazyAI_Compare02_notitle.png?raw=true)
+
 ## Features
 - **Distance-based AI scaling** | *Reduces AI updates for mobs that are far from players*
 - **Pathfinding optimization** | *Simplifies A** *path calculations at long distances*
@@ -61,7 +69,7 @@ The preview images are taken in a stress test situation. It can also be because 
 .minecraft/config/lazy-ai.json
 
 ### Can this mod be used on a server?
-Yes, you can use this mod on a server. The mod works on both the server and the client.
+Yes, you can use this mod on a server. The mod works on both the server and the client. Vanilla clients can join a server using LazyAI.
 
 ### Can this mod be used on a client?
-Yes, you can use this mod on a client. The mod works on both the server and the client.
+Yes, you can use this mod on a client. The mod works on both the server and the client. Clients with LazyAI can join servers without LazyAI.
