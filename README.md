@@ -17,26 +17,22 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 - **[Curseforge](https://www.curseforge.com/minecraft/mc-mods/lazyai)**
 
 ## Performance difference
+_Lower ms -> better_
 ### Vanilla performance
-![Vanilla performance](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Vanilla.png?raw=true)
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Vanilla.png?raw=true" alt="Vanilla performance" width="500"/>
 
+### Lazy AI performance
 **Using AI Optimization Type 'Dynamic' will dynamically switch between the three optimization modes based on TPS**
-### Lazy AI performance (using AIOptimizationType = Minimal)
-![Lazy AI performance (using AIOptimizationType = Minimal)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Minimal.png?raw=true)
-
-### Lazy AI performance (using AIOptimizationType = Moderate)
-![Lazy AI performance (using AIOptimizationType = Moderate)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Default.png?raw=true)
-
-### Lazy AI performance (using AIOptimizationType = Aggressive)
-![Lazy AI performance (using AIOptimizationType = Aggressive)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Aggressive.png?raw=true)
+| Minimal  | Moderate | Agressive |
+| ------------- | ------------- | ------------- |
+| <img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Minimal.png?raw=true" alt="Lazy AI performance (using AIOptimizationType = Minimal)" width="600"/>  | <img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Default.png?raw=true" alt="Lazy AI performance (using AIOptimizationType = Moderate)" width="600"/>  | <img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Aggressive.png?raw=true" alt="Lazy AI performance (using AIOptimizationType = Aggressive)" width="600"/> |
 
 ## Comparison of Vanilla and LazyAI
-_Lower ms -> better_
 ### TPS comparison in a average world
-![Average world TPS test image](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/sideview/LazyAI_Compare01_notitle.png?raw=true)
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/sideview/LazyAI_Compare01_notitle.png?raw=true" alt="Average world TPS test image" width="700"/>
 
 ### TPS comparison in a giant villager trading hall
-![Villager trading hall test image](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/sideview/LazyAI_Compare02_notitle.png?raw=true)
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/sideview/LazyAI_Compare02_notitle.png?raw=true" alt="Villager trading hall test image" width="700"/>
 
 ## Features
 - **Distance-based AI scaling** | *Reduces AI updates for mobs that are far from players*
@@ -53,7 +49,7 @@ _Lower ms -> better_
 ### Available from version 1.3.2+
 - **Never Slow Down Distant Mobs** | *This setting controls if distant mobs should never slow down. Enabling this reduces the mod's TPS-boosting effect on your game, but will fix large (multiply chunks large) mob farms slowing down production.*
 
-![Lazy AI settings menu)](https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_LazyAI_settings.png?raw=true)
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_LazyAI_settings.png?raw=true" alt="Lazy AI settings menu" width="850"/>
 
 ## FAQ
 ### Can this mod increase my TPS?
