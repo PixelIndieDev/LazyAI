@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "lazy_ai_pixelindiedev",
+  "version": "${version}",
+  "name": "Lazy AI",
+  "description": "Optimizes Minecraft mob AI by scaling calculations based on distance to players, improving performance with as minimal gameplay impact as possible",
+  "authors": [
+    "PixelIndieDev"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/lazyai",
+    "sources": "https://github.com/PixelIndieDev/LazyAI",
+    "issues": "https://github.com/PixelIndieDev/LazyAI/issues"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/lazy_ai_pixelindiedev/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev"
+    ],
+    "client": [
+      "com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev_client"
+    ],
+    "server": [
+      "com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev_server"
+    ],
+    "modmenu": [
+      "com.pixelindiedev.lazy_ai_pixelindiedev.config.integration.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "lazy_ai_pixelindiedev.mixins.json"
+  ],
+  "suggests": {
+    "modmenu": "*"
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": ">=1.21 <1.21.9"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+      },
+      "badges": [],
+      "update_checker": true
+    }
+  }
+}

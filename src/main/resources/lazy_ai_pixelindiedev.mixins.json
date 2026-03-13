@@ -1,0 +1,44 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.pixelindiedev.lazy_ai_pixelindiedev.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LookControlMixin",
+    "MobPushingMixin",
+    "WorldMixin",
+    "entity.AnimalEntityMixin",
+    "entity.LivingEntityMixin",
+    "entity.VillagerEntityMixin",
+    "goals.attack.AttackGoalMixin",
+    "goals.attack.BowAttackGoalMixin",
+    "goals.attack.CrossbowAttackGoalMixin",
+    "goals.attack.GhastShootFireballGoalMixin",
+    "goals.attack.MeleeAttackGoalMixin",
+    "goals.attack.ProjectileAttackGoalMixin",
+    "goals.brain.BrainMixin",
+    "goals.look.LookAroundGoalMixin",
+    "goals.look.LookAtEntityGoalMixin",
+    "goals.movement.DestroyEggGoalMixin",
+    "goals.movement.FleeEntityGoalMixin",
+    "goals.movement.FollowMobGoalMixin",
+    "goals.movement.MoveThroughVillageGoalMixin",
+    "goals.movement.MoveToTargetPosGoalMixin",
+    "goals.movement.SwimGoalMixin",
+    "goals.movement.TemptGoalmixin",
+    "goals.movement.WanderAroundGoalMixin",
+    "goals.universal.UniversalAngerGoalmixin",
+    "integration.EntityAccessor",
+    "integration.LivingEntityAccessor",
+    "integration.VillagerEntityAccessor",
+    "navigation.EntityNavigationMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
