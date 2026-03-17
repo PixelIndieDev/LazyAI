@@ -55,6 +55,19 @@ _Lower ms -> better_
 ### Can this mod increase my TPS?
 Yes, this mod can improve your TPS.
 
+### Does this mod affect mob farms?
+Short awnser: Yes, but only a little bit.
+
+Long awnser: Yes, LazyAI does affect mob farm efficiency, but the throughput impact is minimal. In testing with my iron golem farm, vanilla Minecraft yielded 1023 iron ingots, while with the LazyAI on the aggressive setting yielded 979 iron ingots. That's a difference of ~4.5%.
+
+A few things worth noting:
+- This was tested on the aggressive setting, which has the most impact. Using a less aggressive setting will reduce that gap further.
+- A ~4.5% decrease is unlikely to be noticeable in normal gameplay.
+- Results may vary depending on farm design and server performance.
+- The testing were done on LazyAI version 1.6.0.
+
+In practice, you won't notice the mob farm efficiency decrease.
+
 ### What modloader do I need?
 You need Fabric
 
