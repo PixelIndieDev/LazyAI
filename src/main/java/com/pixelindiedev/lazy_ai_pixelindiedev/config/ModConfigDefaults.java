@@ -1,5 +1,11 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.config;
 
+// LazyAI
+// Copyright (c) 2025 PixelIndieDev
+//
+// Licensed under the GNU GENERAL PUBLIC LICENSE
+// See the LICENSE file in the project root for full license information.
+
 public class ModConfigDefaults {
     public static final DistanceScalingType Defaults_DistanceScaling = DistanceScalingType.Medium;
     public static final OptimalizationType Defaults_AIOptimizationType = OptimalizationType.Dynamic;
@@ -9,5 +15,5 @@ public class ModConfigDefaults {
     public static final int Defaults_BlockDistance_Far = 196;
     public static final TemptDelayEnum Defaults_TemptDelay = TemptDelayEnum.Low;
     public static final boolean Defaults_DisableZombieEggStomping = false;
-    public static final boolean Defaults_NeverSlowdownDistantMobs = false;
+    public static final boolean Defaults_EnableVanillaMobTicking = false;
 }

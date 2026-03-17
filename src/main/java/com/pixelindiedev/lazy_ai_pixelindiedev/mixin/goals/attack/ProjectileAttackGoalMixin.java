@@ -1,5 +1,11 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.attack;
 
+// LazyAI
+// Copyright (c) 2025 PixelIndieDev
+//
+// Licensed under the GNU GENERAL PUBLIC LICENSE
+// See the LICENSE file in the project root for full license information.
+
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.TickCancellingAware;
 import net.minecraft.entity.ai.goal.ProjectileAttackGoal;
 import net.minecraft.entity.mob.MobEntity;

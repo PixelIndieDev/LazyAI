@@ -1,5 +1,11 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.config;
 
+// LazyAI
+// Copyright (c) 2025 PixelIndieDev
+//
+// Licensed under the GNU GENERAL PUBLIC LICENSE
+// See the LICENSE file in the project root for full license information.
+
 import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
@@ -23,8 +29,14 @@ public class ModConfig {
     public int BlockDistance_Far = ModConfigDefaults.Defaults_BlockDistance_Far;
     public TemptDelayEnum TemptDelay = ModConfigDefaults.Defaults_TemptDelay;
     public boolean DisableZombieEggStomping = ModConfigDefaults.Defaults_DisableZombieEggStomping;
-    public boolean NeverSlowdownDistantMobs = ModConfigDefaults.Defaults_NeverSlowdownDistantMobs;
+    public boolean EnableVanillaMobTicking = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
     public transient long lastModified = 0L;
+
+    // LazyAI
+    // Copyright (c) 2025 PixelIndieDev
+    //
+    // Licensed under the GNU GENERAL PUBLIC LICENSE
+    // See the LICENSE file in the project root for full license information.
 
     public static ModConfig load() {
         ModConfig config = new ModConfig();
@@ -82,10 +94,10 @@ public class ModConfig {
             obj.addProperty("DisableZombieEggStomping", value);
             changed = true;
         }
-        if (!obj.has("NeverSlowdownDistantMobs")) {
-            var value = ModConfigDefaults.Defaults_NeverSlowdownDistantMobs;
-            LOGGER.warn("Missing option 'NeverSlowdownDistantMobs', adding default (" + value + ").");
-            obj.addProperty("NeverSlowdownDistantMobs", value);
+        if (!obj.has("EnableVanillaMobTicking")) {
+            var value = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
+            LOGGER.warn("Missing option 'EnableVanillaMobTicking', adding default (" + value + ").");
+            obj.addProperty("EnableVanillaMobTicking", value);
             changed = true;
         }
 

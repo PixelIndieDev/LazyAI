@@ -1,5 +1,11 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev;
 
+// LazyAI
+// Copyright (c) 2025 PixelIndieDev
+//
+// Licensed under the GNU GENERAL PUBLIC LICENSE
+// See the LICENSE file in the project root for full license information.
+
 import it.unimi.dsi.fastutil.objects.Reference2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Reference2BooleanOpenHashMap;
 import net.minecraft.block.*;

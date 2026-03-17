@@ -1,5 +1,11 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev;
 
+// LazyAI
+// Copyright (c) 2025 PixelIndieDev
+//
+// Licensed under the GNU GENERAL PUBLIC LICENSE
+// See the LICENSE file in the project root for full license information.
+
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.ModConfig;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;

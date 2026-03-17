@@ -1,5 +1,11 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 
+// LazyAI
+// Copyright (c) 2025 PixelIndieDev
+//
+// Licensed under the GNU GENERAL PUBLIC LICENSE
+// See the LICENSE file in the project root for full license information.
+
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.tag.FluidTags;

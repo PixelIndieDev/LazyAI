@@ -1,5 +1,11 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.navigation;
 
+// LazyAI
+// Copyright (c) 2025 PixelIndieDev
+//
+// Licensed under the GNU GENERAL PUBLIC LICENSE
+// See the LICENSE file in the project root for full license information.
+
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
