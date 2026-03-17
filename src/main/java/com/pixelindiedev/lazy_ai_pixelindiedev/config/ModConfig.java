@@ -23,7 +23,7 @@ public class ModConfig {
     public int BlockDistance_Far = ModConfigDefaults.Defaults_BlockDistance_Far;
     public TemptDelayEnum TemptDelay = ModConfigDefaults.Defaults_TemptDelay;
     public boolean DisableZombieEggStomping = ModConfigDefaults.Defaults_DisableZombieEggStomping;
-    public boolean NeverSlowdownDistantMobs = ModConfigDefaults.Defaults_NeverSlowdownDistantMobs;
+    public boolean EnableVanillaMobTicking = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
     public transient long lastModified = 0L;
 
     public static ModConfig load() {
@@ -82,10 +82,10 @@ public class ModConfig {
             obj.addProperty("DisableZombieEggStomping", value);
             changed = true;
         }
-        if (!obj.has("NeverSlowdownDistantMobs")) {
-            var value = ModConfigDefaults.Defaults_NeverSlowdownDistantMobs;
-            LOGGER.warn("Missing option 'NeverSlowdownDistantMobs', adding default (" + value + ").");
-            obj.addProperty("NeverSlowdownDistantMobs", value);
+        if (!obj.has("EnableVanillaMobTicking")) {
+            var value = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
+            LOGGER.warn("Missing option 'EnableVanillaMobTicking', adding default (" + value + ").");
+            obj.addProperty("EnableVanillaMobTicking", value);
             changed = true;
         }
 
