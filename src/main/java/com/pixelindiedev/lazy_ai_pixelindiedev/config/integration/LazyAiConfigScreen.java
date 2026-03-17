@@ -65,10 +65,10 @@ public class LazyAiConfigScreen extends Screen {
 
         y += 25;
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("Never Slow Down Distant Mobs: " + config.NeverSlowdownDistantMobs), (btn) ->
+        addDrawableChild(ButtonWidget.builder(Text.literal("Enable Vanilla Mob Ticking: " + config.EnableVanillaMobTicking), (btn) ->
         {
-            config.NeverSlowdownDistantMobs = !config.NeverSlowdownDistantMobs;
-            btn.setMessage(Text.literal("Never Slow Down Distant Mobs: " + config.NeverSlowdownDistantMobs));
+            config.EnableVanillaMobTicking = !config.EnableVanillaMobTicking;
+            btn.setMessage(Text.literal("Enable Vanilla Mob Ticking: " + config.EnableVanillaMobTicking));
             config.save();
         }).dimensions(width / 2 - 100, y, 200, 20).build());
 
