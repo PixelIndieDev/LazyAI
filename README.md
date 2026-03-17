@@ -46,8 +46,7 @@ _Lower ms -> better_
 - **Distance Scaling** | *This setting controls what % range of your simulation distance is considered close and far range*
 - **Mob Tempting Delay** | *This setting controls how much delay animals have to being tempted by an item*
 - **Disable Zombie Egg Stomping** | *This setting controls the prevention of zombies wanting to destroy turtle eggs*
-### Available from version 1.3.2+
-- **Never Slow Down Distant Mobs** | *This setting controls if distant mobs should never slow down. Enabling this reduces the mod's TPS-boosting effect on your game, but will fix large (multiply chunks large) mob farms slowing down production.*
+- **Enable Vanilla Mob Ticking (Previously: Never Slow Down Distant Mobs)** | *This setting controls if distant mobs should tick the same as in a unmodded (vanilla) game. Enabling this reduces the mod's TPS-boosting effect on your game, but can fix mob ticking issues.*
 
 <img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_LazyAI_settings.png?raw=true" alt="Lazy AI settings menu" width="850"/>
 
