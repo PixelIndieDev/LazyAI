@@ -9,5 +9,5 @@ public class ModConfigDefaults {
     public static final int Defaults_BlockDistance_Far = 196;
     public static final TemptDelayEnum Defaults_TemptDelay = TemptDelayEnum.Low;
     public static final boolean Defaults_DisableZombieEggStomping = false;
-    public static final boolean Defaults_NeverSlowdownDistantMobs = false;
+    public static final boolean Defaults_EnableVanillaMobTicking = false;
 }
