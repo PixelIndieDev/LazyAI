@@ -54,6 +54,9 @@ _Lower ms -> better_
 ### Can this mod increase my TPS?
 Yes, this mod can improve your TPS.
 
+### Can this mod increase my FPS?
+No, this mod cannot improve your FPS.
+
 ### Does this mod affect mob farms?
 Short awnser: Yes, but only a little bit.
 
