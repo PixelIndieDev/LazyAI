@@ -48,7 +48,7 @@ _Lower ms -> better_
 - **Disable Zombie Egg Stomping** | *This setting controls the prevention of zombies wanting to destroy turtle eggs*
 - **Enable Vanilla Mob Ticking (Previously: Never Slow Down Distant Mobs)** | *This setting controls if distant mobs should tick the same as in a unmodded (vanilla) game. Enabling this reduces the mod's TPS-boosting effect on your game, but can fix mob ticking issues.*
 
-<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_LazyAI_settings.png?raw=true" alt="Lazy AI settings menu" width="850"/>
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_LazyAI_settings.png?raw=true" alt="Lazy AI settings menu" width="900"/>
 
 ## FAQ
 ### Can this mod increase my TPS?
