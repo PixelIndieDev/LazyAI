@@ -1,20 +1,20 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration;
 
-// LazyAI
-// Copyright (c) 2025 PixelIndieDev
-//
-// Licensed under the GNU GENERAL PUBLIC LICENSE
-// See the LICENSE file in the project root for full license information.
-
-import net.minecraft.entity.Entity;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.material.Fluid;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(Entity.class)
 public interface EntityAccessor {
-    @Invoker("updateSubmergedInWaterState")
-    void invokeUpdateSubmergedInWaterState();
+    @Accessor("wasEyeInWater")
+    void setWasEyeInWater(boolean value);
 
-    @Invoker("updateWaterState")
+    @Invoker("isEyeInFluid")
+    boolean doIsEyeInFluid(final TagKey<Fluid> type);
+
+    @Invoker("updateFluidInteraction")
     boolean invokeUpdateWaterState();
 }

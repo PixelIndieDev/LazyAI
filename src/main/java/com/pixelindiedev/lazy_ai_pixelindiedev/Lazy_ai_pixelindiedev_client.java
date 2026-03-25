@@ -19,9 +19,9 @@ public class Lazy_ai_pixelindiedev_client implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.world == null) return;
+            if (client.level == null) return;
 
-            final int simDistanceChunks = client.options.getSimulationDistance().getValue();    // value is in chunks
+            final int simDistanceChunks = client.options.simulationDistance().get();    // value is in chunks
 
             final ModConfig config = ModConfig.load();
             lastSimDistanceChunks = squaredBlocksToChunks(config.BlockDistance_Close, config.getBlockDistance_Close_Multiplier());

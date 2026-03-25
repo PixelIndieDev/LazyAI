@@ -8,8 +8,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import net.minecraft.entity.ai.goal.MoveToTargetPosGoal;
-import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = MoveToTargetPosGoal.class, priority = 1001)
+@Mixin(value = MoveToBlockGoal.class, priority = 1001)
 public class MoveToTargetPosGoalMixin {
     @Unique
     private final static int[] cooldowns = {20, 50, 120};  // Cooldowns from close to far, in ticks
@@ -29,7 +29,7 @@ public class MoveToTargetPosGoalMixin {
     private final static int[] cooldownsMinimal = {5, 25, 80};
     @Final
     @Shadow
-    protected PathAwareEntity mob;
+    protected PathfinderMob mob;
     @Unique
     private int cooldown = 0;
     @Unique
@@ -37,7 +37,7 @@ public class MoveToTargetPosGoalMixin {
     @Unique
     private int[] temparray;
 
-    @Inject(method = "canStart", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
     private void ThrottleSearch(CallbackInfoReturnable<Boolean> cir) {
         final DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(mob);
 
@@ -55,7 +55,7 @@ public class MoveToTargetPosGoalMixin {
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void reduceTickLoad(CallbackInfo ci) {
         if (temparray == null || temparray[2] == 0) return;
-        if ((mob.age + mob.getId()) % temparray[2] != 0) ci.cancel();
+        if ((mob.tickCount + mob.getId()) % temparray[2] != 0) ci.cancel();
     }
 
     @Unique

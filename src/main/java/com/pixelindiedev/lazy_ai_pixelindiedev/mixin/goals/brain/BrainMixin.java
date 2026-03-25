@@ -7,11 +7,11 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.brain;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.Brain;
-import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,14 +28,14 @@ public class BrainMixin<E extends LivingEntity> {
     private final static int[] cooldownsMinimal = {1, 2, 5};
 
     @Inject(method = "tickSensors", at = @At("HEAD"), cancellable = true)
-    private void throttleSensors(ServerWorld world, E entity, CallbackInfo ci) {
-        if (!(entity instanceof MobEntity mob)) return;
+    private void throttleSensors(ServerLevel world, E entity, CallbackInfo ci) {
+        if (!(entity instanceof Mob mob)) return;
 
         //don't impact breeding
         final Brain<?> brain = (Brain<?>) (Object) this;
-        if (brain.hasMemoryModule(MemoryModuleType.BREED_TARGET)) return;
+        if (brain.hasMemoryValue(MemoryModuleType.BREED_TARGET)) return;
 
-        if ((world.getTime() + mob.getId()) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
+        if ((world.getGameTime() + mob.getId()) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
             ci.cancel();
     }
 

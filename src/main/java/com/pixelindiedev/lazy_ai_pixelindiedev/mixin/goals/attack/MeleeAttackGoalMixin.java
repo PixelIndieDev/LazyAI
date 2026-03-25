@@ -7,8 +7,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.attack;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.TickCancellingAware;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,14 +20,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MeleeAttackGoalMixin {
     @Final
     @Shadow
-    protected PathAwareEntity mob;
+    protected PathfinderMob mob;
     @Shadow
-    private int cooldown;
+    private int ticksUntilNextAttack;
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void compensateCooldown(CallbackInfo ci) {
         final int skipped = ((TickCancellingAware) mob).lazy_ai$getSkippedTicks();
         if (skipped <= 0) return;
-        if (cooldown > 0) cooldown = Math.max(0, cooldown - skipped);
+        if (ticksUntilNextAttack > 0) ticksUntilNextAttack = Math.max(0, ticksUntilNextAttack - skipped);
     }
 }

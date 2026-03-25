@@ -10,20 +10,20 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.VillagerCacheAccessor;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.VillagerEntityAccessor;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityInteraction;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.village.VillagerProfession;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.village.ReputationEventType;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.hasSolidCollision;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.getOptimalizationType;
 
-@Mixin(VillagerEntity.class)
+@Mixin(Villager.class)
 public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private final static int[] cooldowns = {50, 90, 150};  // Cooldowns from close to far, in ticks
@@ -47,9 +47,9 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private final Direction[] directionsDirections = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
     @Unique
-    private BlockPos.Mutable reusableSide = new BlockPos.Mutable();
+    private BlockPos.MutableBlockPos reusableSide = new BlockPos.MutableBlockPos();
     @Unique
-    private VillagerEntity villager;
+    private Villager villager;
     @Unique
     private boolean isInTradingHall;
     @Unique
@@ -59,22 +59,22 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private int randomSelectedTick;
     @Unique
-    private RegistryEntry<VillagerProfession> cachedProfessionEntry;
+    private Holder<VillagerProfession> cachedProfessionEntry;
     @Unique
-    private RegistryKey<VillagerProfession> cachedProfessionKey;
+    private ResourceKey<VillagerProfession> cachedProfessionKey;
 
     @Shadow
-    protected abstract void resetCustomer();
+    protected abstract void stopTrading();
 
-    @Inject(method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;Lnet/minecraft/registry/entry/RegistryEntry;)V", at = @At("RETURN"))
-    private void captureMob(EntityType entityType, World world, RegistryEntry type, CallbackInfo ci) {
-        villager = (VillagerEntity) (Object) this;
+    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/Holder;)V", at = @At("RETURN"))
+    private void captureMob(EntityType entityType, Level world, Holder type, CallbackInfo ci) {
+        villager = (Villager) (Object) this;
         isInTradingHall = false;
         shouldRefreshTradingHall = false;
         randomSelectedTick = villager.getId();
         cachedProfessionEntry = null;
         cachedProfessionKey = null;
-        reusableSide = new BlockPos.Mutable();
+        reusableSide = new BlockPos.MutableBlockPos();
     }
 
     @Override
@@ -86,62 +86,62 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
         }
     }
 
-    @Inject(method = "mobTick", at = @At("HEAD"), cancellable = true)
-    private void skipIdleTradingHallTick(ServerWorld world, CallbackInfo ci) {
+    @Inject(method = "customServerAiStep", at = @At("HEAD"), cancellable = true)
+    private void skipIdleTradingHallTick(ServerLevel world, CallbackInfo ci) {
         if (villager == null || !villager.isAlive() || villager.isBaby() || villager.isPanicking()) return;
         if (!isInTradingCell(villager)) return;
 
-        final RegistryKey<VillagerProfession> villagerprof = getCachedProfession();
+        final ResourceKey<VillagerProfession> villagerprof = getCachedProfession();
         if (villagerprof == VillagerProfession.NONE || villagerprof == VillagerProfession.NITWIT) return;
 
-        if (villager.hasCustomer()) return;
+        if (villager.isTrading()) return;
 
-        if (((villager.age + randomSelectedTick) & 31) != 0) {
+        if (((villager.tickCount + randomSelectedTick) & 31) != 0) {
             final VillagerEntityAccessor accessor = (VillagerEntityAccessor) villager;
 
             final int tempInt = accessor.getLevelUpTimer();
-            if (!villager.hasCustomer() && tempInt > 0) {
+            if (!villager.isTrading() && tempInt > 0) {
                 accessor.setLevelUpTimer(tempInt - 1);
 
                 if (accessor.getLevelUpTimer() <= 0) {
                     if (accessor.isLevelingUp()) accessor.invokeLevelUp(world);
-                    villager.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 200, 0));
+                    villager.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
                 }
             }
 
-            final PlayerEntity lastcust = accessor.getLastCustomer();
+            final Player lastcust = accessor.getLastCustomer();
             if (lastcust != null) {
-                world.handleInteraction(EntityInteraction.TRADE, lastcust, villager);
-                world.sendEntityStatus(villager, (byte) 14);
+                world.onReputationEvent(ReputationEventType.TRADE, lastcust, villager);
+                world.broadcastEntityEvent(villager, (byte) 14);
                 accessor.setLastCustomer(null);
             }
 
-            if (villager.getVillagerData().profession().matchesKey(VillagerProfession.NONE) && villager.hasCustomer())
-                resetCustomer();
+            if (villager.getVillagerData().profession().is(VillagerProfession.NONE) && villager.isTrading())
+                stopTrading();
 
             ci.cancel();
         }
     }
 
     @Unique
-    private boolean isInTradingCell(VillagerEntity villager) {
+    private boolean isInTradingCell(Villager villager) {
         final int[] cooldownList = getCooldownList();
         final int distanceOrdinal = Lazy_ai_pixelindiedev.getDistance(villager).ordinal();
 
-        if ((villager.age + randomSelectedTick) % cooldownList[distanceOrdinal] != 0) return isInTradingHall;
+        if ((villager.tickCount + randomSelectedTick) % cooldownList[distanceOrdinal] != 0) return isInTradingHall;
 
-        final BlockPos center = villager.getBlockPos();
+        final BlockPos center = villager.blockPosition();
         //if block was changed near, or villager is no longer standing in the same spot
         if (shouldRefreshTradingHall || lastStandingLocation != center) {
             shouldRefreshTradingHall = false;
             lastStandingLocation = center;
 
-            final World world = villager.getEntityWorld();
+            final Level world = villager.level();
 
             int fullyBlockedDirections = 0;
             int halfBlockedDirections = 0;
             for (Direction direction : directionsDirections) {
-                reusableSide.set(center, direction);
+                reusableSide.setWithOffset(center, direction);
                 boolean baseSolid = getCachedSolidBlock(world, reusableSide);
                 reusableSide.move(Direction.UP);
                 boolean upperSolid = getCachedSolidBlock(world, reusableSide);
@@ -173,17 +173,17 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     }
 
     @Unique
-    private RegistryKey<VillagerProfession> getCachedProfession() {
-        final RegistryEntry<VillagerProfession> current = villager.getVillagerData().profession();
+    private ResourceKey<VillagerProfession> getCachedProfession() {
+        final Holder<VillagerProfession> current = villager.getVillagerData().profession();
         if (current != cachedProfessionEntry) {
             cachedProfessionEntry = current;
-            cachedProfessionKey = current.getKey().get();
+            cachedProfessionKey = current.unwrapKey().get();
         }
         return cachedProfessionKey;
     }
 
     @Unique
-    private boolean getCachedSolidBlock(World world, BlockPos pos) {
+    private boolean getCachedSolidBlock(Level world, BlockPos pos) {
         final long key = pos.asLong();
         if (cachedBlockPos.containsKey(key)) return cachedBlockPos.get(key);
         else {

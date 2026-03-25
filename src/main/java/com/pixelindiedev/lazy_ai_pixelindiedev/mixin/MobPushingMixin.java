@@ -8,11 +8,11 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,16 +33,16 @@ public abstract class MobPushingMixin {
     @Unique
     private int cooldown = 0;
     @Unique
-    private MobEntity mob;
+    private Mob mob;
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void captureMob(EntityType entityType, World world, CallbackInfo ci) {
+    private void captureMob(EntityType entityType, Level world, CallbackInfo ci) {
         this.mob = GetMobEntity((LivingEntity) (Object) this);
     }
 
-    @Inject(method = "pushAwayFrom", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "push(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
     private void ThrottlePush(Entity other, CallbackInfo ci) {
         if (EnableCriticalTPSMode) ci.cancel();
 

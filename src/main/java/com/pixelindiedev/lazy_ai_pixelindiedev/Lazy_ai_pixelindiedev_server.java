@@ -20,7 +20,7 @@ public class Lazy_ai_pixelindiedev_server implements DedicatedServerModInitializ
     @Override
     public void onInitializeServer() {
         ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
-            final int simDistanceChunks = server.getPlayerManager().getSimulationDistance();    // value is in chunks
+            final int simDistanceChunks = server.getPlayerList().getSimulationDistance();    // value is in chunks
 
             final ModConfig config = ModConfig.load();
             lastSimDistanceChunks = squaredBlocksToChunks(config.BlockDistance_Close, config.getBlockDistance_Close_Multiplier());

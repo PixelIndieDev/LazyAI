@@ -4,15 +4,16 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.TickCancellingAware;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.EntityAccessor;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LazyEntityReference;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,19 +46,19 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Unique
     private final static int[] cooldownsMinimal = {1, 1, 2};
     @Shadow
-    public float headYaw;
+    public float yHeadRot;
     @Shadow
-    public float lastHeadYaw;
+    public float yHeadRotO;
     @Shadow
-    public float bodyYaw;
+    public float yBodyRot;
     @Shadow
-    public float lastBodyYaw;
+    public float yBodyRotO;
     @Shadow
-    protected int playerHitTimer;
+    protected int lastHurtByPlayerMemoryTime;
     @Shadow
-    protected @Nullable LazyEntityReference<PlayerEntity> attackingPlayer;
+    protected @Nullable EntityReference<Player> lastHurtByPlayer;
     @Shadow
-    private @Nullable LivingEntity attacking;
+    private @Nullable LivingEntity lastHurtMob;
     @Unique
     private LivingEntity mob;
     @Unique
@@ -81,22 +82,22 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     }
 
     @Shadow
-    public abstract @Nullable LivingEntity getEntity();
+    public abstract @Nullable LivingEntity asLivingEntity();
 
     @Shadow
-    protected abstract void tickStatusEffects();
+    protected abstract void tickEffects();
 
     @Shadow
-    protected abstract void updatePostDeath();
+    protected abstract void tickDeath();
 
-    @Inject(method = "tickCramming", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "pushEntities", at = @At("HEAD"), cancellable = true)
     private void limitCramming(CallbackInfo ci) {
         if (EnableCriticalTPSMode) ci.cancel();
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void assignOffset(EntityType<?> type, World world, CallbackInfo ci) {
-        this.mob = this.getEntity();
+    private void assignOffset(EntityType<?> type, Level world, CallbackInfo ci) {
+        this.mob = this.asLivingEntity();
         this.aiTickOffset = mob.getId() % getCooldownList()[2];
     }
 
@@ -105,7 +106,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void ThrottleWholeAI(CallbackInfo ci) {
         if (mob == null) return;
-        if (mob.isPlayer()) return;
+        if (mob.isAlwaysTicking()) return;
         if (Lazy_ai_pixelindiedev.getEnableVanillaMobTicking()) return;
 
         final int[] theList = getCooldownList();
@@ -123,23 +124,23 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
             return;
         }
 
-        if ((mob.age + aiTickOffset) % interval != 0) {
+        if ((mob.tickCount + aiTickOffset) % interval != 0) {
             isInThrottle = true;
             ci.cancel();
 
             skippedTicks++;
 
             // limit tickMovement()
-            final int maxTicksSkippedAdded = (mob instanceof MobEntity mobEntity && isMobInFight(mobEntity)) ? 0 : 2;
+            final int maxTicksSkippedAdded = (mob instanceof Mob mobEntity && isMobInFight(mobEntity)) ? 0 : 2;
             if (interval != cachedInterval) {
                 cachedInterval = interval;
-                cachedBaseMovementSkip = MathHelper.clamp(MathHelper.floor(interval * 0.05f), 0, 10);
+                cachedBaseMovementSkip = Mth.clamp(Mth.floor(interval * 0.05f), 0, 10);
             }
             final int maxMovementSkip = cachedBaseMovementSkip + maxTicksSkippedAdded;
 
             if (tickCounter >= maxMovementSkip) {
                 if (!mob.isRemoved()) {
-                    mob.tickMovement();
+                    mob.aiStep();
                     tickCounter = 0;
                 }
             } else tickCounter++;
@@ -148,53 +149,53 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
 
             //swimming update
             accessor.invokeUpdateWaterState();
-            accessor.invokeUpdateSubmergedInWaterState();
+            accessor.setWasEyeInWater(accessor.doIsEyeInFluid(FluidTags.WATER));
             mob.updateSwimming();
 
             // fire damaneg
-            final World world = mob.getEntityWorld();
-            if (world instanceof ServerWorld serverWorld) {
-                final int fireTicks = mob.getFireTicks();
+            final Level world = mob.level();
+            if (world instanceof ServerLevel serverWorld) {
+                final int fireTicks = mob.getRemainingFireTicks();
                 if (fireTicks > 0) {
-                    if (mob.isFireImmune()) mob.extinguish();
+                    if (mob.fireImmune()) mob.clearFire();
                     else {
                         if (fireTicks % 20 == 0 && !mob.isInLava()) {
-                            mob.damage(serverWorld, mob.getDamageSources().onFire(), 1.0f);
+                            mob.hurtServer(serverWorld, mob.damageSources().onFire(), 1.0f);
                         }
-                        mob.setFireTicks(fireTicks - 1);
+                        mob.setRemainingFireTicks(fireTicks - 1);
                     }
                 }
-            } else mob.extinguish();
+            } else mob.clearFire();
 
             if (mob.hurtTime > 0) --mob.hurtTime;
-            if (mob.timeUntilRegen > 0 && !(mob instanceof ServerPlayerEntity)) --mob.timeUntilRegen;
-            if (playerHitTimer > 0) --playerHitTimer;
-            else attackingPlayer = null;
+            if (mob.invulnerableTime > 0 && !(mob instanceof ServerPlayer)) --mob.invulnerableTime;
+            if (lastHurtByPlayerMemoryTime > 0) --lastHurtByPlayerMemoryTime;
+            else lastHurtByPlayer = null;
 
-            if (mob.isDead() && mob.getEntityWorld().shouldUpdatePostDeath(mob)) updatePostDeath();
-            if (attacking != null && !attacking.isAlive()) attacking = null;
+            if (mob.isDeadOrDying() && mob.level().shouldTickDeath(mob)) tickDeath();
+            if (lastHurtMob != null && !lastHurtMob.isAlive()) lastHurtMob = null;
 
-            tickStatusEffects();
+            tickEffects();
 
-            mob.lastYaw = mob.getYaw();
-            mob.lastPitch = mob.getPitch();
-            lastHeadYaw = headYaw;
-            lastBodyYaw = bodyYaw;
+            mob.yRotO = mob.getYRot();
+            mob.xRotO = mob.getXRot();
+            yHeadRotO = yHeadRot;
+            yBodyRotO = yBodyRot;
         } else {
             isInThrottle = false;
             skippedTicks = 0;
         }
     }
 
-    @Inject(method = "tickRiptide", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "checkAutoSpinAttack", at = @At("HEAD"), cancellable = true)
     private void ThrottleRiptide(CallbackInfo ci) {
         if (isInThrottle) ci.cancel();
     }
 
     // mobentity check is already run whjen this gets triggered
     @Unique
-    private boolean isMobInFight(MobEntity mobEntity) {
-        return (mobEntity.getTarget() != null) || mob.hurtTime > 0 || playerHitTimer > 0 || mob.getAttacker() != null || mob.getAttacking() != null;
+    private boolean isMobInFight(Mob mobEntity) {
+        return (mobEntity.getTarget() != null) || mob.hurtTime > 0 || lastHurtByPlayerMemoryTime > 0 || mob.getLastHurtByMob() != null || mob.getLastHurtMob() != null;
     }
 
     @Unique

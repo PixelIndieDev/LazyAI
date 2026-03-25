@@ -8,7 +8,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import net.minecraft.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

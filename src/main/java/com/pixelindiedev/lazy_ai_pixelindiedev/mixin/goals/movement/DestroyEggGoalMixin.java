@@ -8,8 +8,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import net.minecraft.entity.ai.goal.StepAndDestroyBlockGoal;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = StepAndDestroyBlockGoal.class, priority = 1001)
+@Mixin(value = RemoveBlockGoal.class, priority = 1001)
 public class DestroyEggGoalMixin {
     @Unique
     private final static int[] cooldowns = {40, 100, 200};  // Cooldowns from close to far, in ticks
@@ -32,16 +32,16 @@ public class DestroyEggGoalMixin {
     private DistanceType previousDistanceType = DistanceType.FarRange;
     @Final
     @Shadow
-    private MobEntity stepAndDestroyMob;
+    private Mob removerMob;
 
-    @Inject(method = "canStart", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
     private void ThrottleEggCheck(CallbackInfoReturnable<Boolean> cir) {
         if (Lazy_ai_pixelindiedev.getDisableZombieEggStomping()) {
             cir.setReturnValue(false);
             return;
         }
 
-        final DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(stepAndDestroyMob);
+        final DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(removerMob);
 
         final int[] temparray = getCooldownList();
         if (newDistanceType != previousDistanceType) {

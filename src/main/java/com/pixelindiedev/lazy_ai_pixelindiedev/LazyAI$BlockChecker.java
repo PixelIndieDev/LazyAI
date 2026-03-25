@@ -8,11 +8,15 @@ package com.pixelindiedev.lazy_ai_pixelindiedev;
 
 import it.unimi.dsi.fastutil.objects.Reference2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Reference2BooleanOpenHashMap;
-import net.minecraft.block.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.EmptyBlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.EmptyBlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class LazyAI$BlockChecker {
     //this checks for collision on blocks more efficiently than the isSolidBlock() as this checks less accurate, although I don't need the accuracy for what I use it for
@@ -113,16 +117,16 @@ public class LazyAI$BlockChecker {
 
         //these should have a different boolean value
         //is it a door or trapdoor
-        if (block instanceof DoorBlock || block instanceof TrapdoorBlock) {
+        if (block instanceof DoorBlock || block instanceof TrapDoorBlock) {
             blockSolidCollisionCheckCache.put(block, false);
             return false;
         }
 
         boolean isSolid;
         try {
-            BlockState defaultState = block.getDefaultState();
-            VoxelShape collisionShape = defaultState.getCollisionShape(EmptyBlockView.INSTANCE, BlockPos.ORIGIN);
-            isSolid = !collisionShape.isEmpty() && collisionShape != VoxelShapes.empty();
+            BlockState defaultState = block.defaultBlockState();
+            VoxelShape collisionShape = defaultState.getCollisionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+            isSolid = !collisionShape.isEmpty() && collisionShape != Shapes.empty();
         } catch (Exception e) {
             isSolid = false;
         }

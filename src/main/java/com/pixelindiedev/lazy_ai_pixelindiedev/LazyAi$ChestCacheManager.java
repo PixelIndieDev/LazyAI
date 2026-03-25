@@ -8,11 +8,11 @@ package com.pixelindiedev.lazy_ai_pixelindiedev;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ import java.util.Map;
 public class LazyAi$ChestCacheManager {
     private static final Reference2ObjectOpenHashMap<Object, Long2ObjectOpenHashMap<List<BlockPos>>> worldCaches = new Reference2ObjectOpenHashMap<>();
 
-    public static List<BlockPos> getCachedStorage(ServerWorld world, BlockPos center, int horizontalRange, int verticalRange) {
-        final Object worldKey = world.getRegistryKey();
+    public static List<BlockPos> getCachedStorage(ServerLevel world, BlockPos center, int horizontalRange, int verticalRange) {
+        final Object worldKey = world.dimension();
         Long2ObjectOpenHashMap<List<BlockPos>> worldCache;
 
         //get worldcache
@@ -88,8 +88,8 @@ public class LazyAi$ChestCacheManager {
         addChest(worldCache, chunk, chests);
     }
 
-    public static void addChestWorld(ServerWorld world, BlockPos pos) {
-        final Object worldKey = world.getRegistryKey();
+    public static void addChestWorld(ServerLevel world, BlockPos pos) {
+        final Object worldKey = world.dimension();
         final Long2ObjectOpenHashMap<List<BlockPos>> worldCache;
 
         synchronized (worldCaches) {
@@ -108,8 +108,8 @@ public class LazyAi$ChestCacheManager {
         }
     }
 
-    public static void removeChest(ServerWorld world, BlockPos pos) {
-        final Object worldKey = world.getRegistryKey();
+    public static void removeChest(ServerLevel world, BlockPos pos) {
+        final Object worldKey = world.dimension();
         final Long2ObjectOpenHashMap<List<BlockPos>> worldCache;
 
         synchronized (worldCaches) {
@@ -128,8 +128,8 @@ public class LazyAi$ChestCacheManager {
         }
     }
 
-    public static void invalidateChunk(ServerWorld world, int chunkX, int chunkZ) {
-        final Object worldKey = world.getRegistryKey();
+    public static void invalidateChunk(ServerLevel world, int chunkX, int chunkZ) {
+        final Object worldKey = world.dimension();
         final Long2ObjectOpenHashMap<List<BlockPos>> worldCache;
 
         synchronized (worldCaches) {
@@ -144,23 +144,23 @@ public class LazyAi$ChestCacheManager {
         }
     }
 
-    public static void clearWorld(ServerWorld world) {
-        final Object worldKey = world.getRegistryKey();
+    public static void clearWorld(ServerLevel world) {
+        final Object worldKey = world.dimension();
         synchronized (worldCaches) {
             worldCaches.remove(worldKey);
         }
     }
 
-    private static List<BlockPos> scanChunkForChests(ServerWorld world, int chunkX, int chunkZ) {
+    private static List<BlockPos> scanChunkForChests(ServerLevel world, int chunkX, int chunkZ) {
         final List<BlockPos> chests = new ArrayList<>(8);
 
-        if (!world.isChunkLoaded(chunkX, chunkZ)) return chests;
+        if (!world.hasChunk(chunkX, chunkZ)) return chests;
 
-        final WorldChunk chunk = world.getChunkManager().getWorldChunk(chunkX, chunkZ);
+        final LevelChunk chunk = world.getChunkSource().getChunkNow(chunkX, chunkZ);
         if (chunk != null) {
             final Map<BlockPos, BlockEntity> blockEntities = chunk.getBlockEntities();
             for (Map.Entry<BlockPos, BlockEntity> entry : blockEntities.entrySet()) {
-                if (entry.getValue() instanceof ChestBlockEntity) chests.add(entry.getKey().toImmutable());
+                if (entry.getValue() instanceof ChestBlockEntity) chests.add(entry.getKey().immutable());
             }
         }
         return chests;

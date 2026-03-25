@@ -7,8 +7,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import net.minecraft.entity.ai.control.LookControl;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.control.LookControl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,19 +28,19 @@ public class LookControlMixin {
 
     @Final
     @Shadow
-    protected MobEntity entity;
+    protected Mob mob;
 
     @Unique
     private int offset;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void captureMob(MobEntity mob, CallbackInfo ci) {
-        offset = entity.getId();
+    private void captureMob(Mob mob, CallbackInfo ci) {
+        offset = mob.getId();
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTick(CallbackInfo ci) {
-        if ((entity.age + offset) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(entity).ordinal()] != 0)
+        if ((mob.tickCount + offset) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
             ci.cancel();
     }
 

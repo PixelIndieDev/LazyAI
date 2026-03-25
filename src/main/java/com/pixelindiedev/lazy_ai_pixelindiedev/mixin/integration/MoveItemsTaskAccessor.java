@@ -1,33 +1,27 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration;
 
-// LazyAI
-// Copyright (c) 2025 PixelIndieDev
-//
-// Licensed under the GNU GENERAL PUBLIC LICENSE
-// See the LICENSE file in the project root for full license information.
-
-import net.minecraft.entity.ai.brain.task.MoveItemsTask;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.util.math.GlobalPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.behavior.TransportItemsBetweenContainers;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.util.Set;
 
-@Mixin(MoveItemsTask.class)
+@Mixin(TransportItemsBetweenContainers.class)
 public interface MoveItemsTaskAccessor {
     @Invoker("getVisitedPositions")
-    static Set<GlobalPos> invokeGetVisitedPositions(PathAwareEntity entity) {
+    static Set<GlobalPos> invokeGetVisitedPositions(PathfinderMob entity) {
         throw new AssertionError();
     }
 
     @Invoker("getUnreachablePositions")
-    static Set<GlobalPos> invokeGetUnreachablePositions(PathAwareEntity entity) {
+    static Set<GlobalPos> invokeGetUnreachablePositions(PathfinderMob entity) {
         throw new AssertionError();
     }
 
-    @Invoker("canPickUpItem")
-    static boolean invokeCanPickUpItem(PathAwareEntity entity) {
+    @Invoker("isPickingUpItems")
+    static boolean invokeCanPickUpItem(PathfinderMob entity) {
         throw new AssertionError();
     }
 }

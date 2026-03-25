@@ -8,8 +8,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import net.minecraft.entity.ai.goal.MoveThroughVillageGoal;
-import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,13 +28,13 @@ public class MoveThroughVillageGoalMixin {
     private final static int[] cooldownsMinimal = {5, 25, 80};
     @Final
     @Shadow
-    protected PathAwareEntity mob;
+    protected PathfinderMob mob;
     @Unique
     private int cooldown = 0;
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
 
-    @Inject(method = "canStart", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
     private void throttleVillageScan(CallbackInfoReturnable<Boolean> cir) {
         final DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(mob);
 

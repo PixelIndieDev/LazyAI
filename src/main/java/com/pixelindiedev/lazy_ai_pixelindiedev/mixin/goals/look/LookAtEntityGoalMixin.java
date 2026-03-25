@@ -8,8 +8,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.look;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = LookAtEntityGoal.class, priority = 1001)
+@Mixin(value = LookAtPlayerGoal.class, priority = 1001)
 public class LookAtEntityGoalMixin {
     @Unique
     private final static int[] cooldowns = {2, 10, 40};  // Cooldowns from close to far, in ticks
@@ -28,13 +28,13 @@ public class LookAtEntityGoalMixin {
     private final static int[] cooldownsMinimal = {1, 5, 20};
     @Shadow
     @Final
-    protected MobEntity mob;
+    protected Mob mob;
     @Unique
     private int cooldown = 0;
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
 
-    @Inject(method = "canStart", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
     private void throttleLookAt(CallbackInfoReturnable<Boolean> cir) {
         final DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(mob);
 

@@ -5,10 +5,10 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.config.ModConfig;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 import java.util.UUID;
@@ -40,12 +40,12 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     public static void onServerTick(MinecraftServer server) {
         if (CONFIG.lastModified == 0L) CONFIG.lastModified = ModConfig.configFile.lastModified();
 
-        final int currentTick = server.getTicks();
+        final int currentTick = server.getTickCount();
 
         // Calculate TPS
         if (CONFIG.AIOptimizationType == OptimalizationType.Dynamic) {
             if ((currentTick & 8) == 0) {
-                final long[] tickTimes = server.getTickTimes(); //Always returns 100 values, so no valid check is needed
+                final long[] tickTimes = server.getTickTimesNanos(); //Always returns 100 values, so no valid check is needed
                 long sum = 0;
                 float tickTimesLength = 0.0f;
                 for (long time : tickTimes) {
@@ -79,10 +79,10 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     public static DistanceType GetClosestPlayerDistance(LivingEntity mob) {
         if (mob == null) return DistanceType.FarRange;
 
-        final PlayerEntity closestPlayer = mob.getEntityWorld().getClosestPlayer(mob, CONFIG.BlockDistance_Far);
+        final Player closestPlayer = mob.level().getNearestPlayer(mob, CONFIG.BlockDistance_Far);
         if (closestPlayer == null) return DistanceType.FarRange;
 
-        final double distancebetween = mob.squaredDistanceTo(closestPlayer);
+        final double distancebetween = mob.distanceToSqr(closestPlayer);
 
         if (distancebetween >= CONFIG.BlockDistance_Far) return DistanceType.FarRange;
         else if (distancebetween >= CONFIG.BlockDistance_Close) return DistanceType.MediumRange;
@@ -99,9 +99,9 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     // It contains no proprietary logic. Analysis is not required.
 
     public static DistanceType getDistance(LivingEntity mob) {
-        if (mob == null || mob.getEntityWorld() == null) return DistanceType.FarRange;
+        if (mob == null || mob.level() == null) return DistanceType.FarRange;
 
-        return cache.computeIfAbsent(mob.getUuid(), id -> GetClosestPlayerDistance(mob));
+        return cache.computeIfAbsent(mob.getUUID(), id -> GetClosestPlayerDistance(mob));
     }
 
     public static int squaredBlocksToChunks(int squaredBlockDistance, int multiplier) {
@@ -139,9 +139,9 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         return lastTick;
     }
 
-    public static MobEntity GetMobEntity(LivingEntity entity) {
+    public static Mob GetMobEntity(LivingEntity entity) {
         if (entity != null) {
-            if (entity instanceof MobEntity mob) return mob;
+            if (entity instanceof Mob mob) return mob;
             else return null;
         } else return null;
     }
