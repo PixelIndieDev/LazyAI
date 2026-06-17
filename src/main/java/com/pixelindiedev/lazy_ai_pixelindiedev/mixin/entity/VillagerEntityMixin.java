@@ -66,12 +66,12 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Shadow
     protected abstract void stopTrading();
 
-    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/Holder;)V", at = @At("RETURN"))
-    private void captureMob(EntityType entityType, Level world, Holder type, CallbackInfo ci) {
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void captureMob(EntityType entityType, Level level, CallbackInfo ci) {
         villager = (Villager) (Object) this;
         isInTradingHall = false;
         shouldRefreshTradingHall = false;
-        randomSelectedTick = villager.getId();
+        randomSelectedTick = villager.getUUID().hashCode() & Integer.MAX_VALUE;
         cachedProfessionEntry = null;
         cachedProfessionKey = null;
         reusableSide = new BlockPos.MutableBlockPos();

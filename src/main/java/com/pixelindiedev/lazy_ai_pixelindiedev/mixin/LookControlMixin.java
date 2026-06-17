@@ -35,7 +35,7 @@ public class LookControlMixin {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void captureMob(Mob mob, CallbackInfo ci) {
-        offset = mob.getId();
+        offset = mob.getUUID().hashCode() & Integer.MAX_VALUE;
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)

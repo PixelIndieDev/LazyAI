@@ -80,13 +80,13 @@ public class LazyAiConfigScreen extends Screen {
 
         y += 30;
 
-        addRenderableWidget(Button.builder(Component.literal("Done"), (btn) -> Minecraft.getInstance().setScreen(parent)).bounds(width / 2 - 100, y, 200, 20).build());
+        addRenderableWidget(Button.builder(Component.literal("Done"), (btn) -> Minecraft.getInstance().setScreenAndShow(parent)).bounds(width / 2 - 100, y, 200, 20).build());
     }
 
     @Override
     public void onClose() {
         config.save();
         assert minecraft != null;
-        minecraft.setScreen(parent);
+        minecraft.setScreenAndShow(parent);
     }
 }

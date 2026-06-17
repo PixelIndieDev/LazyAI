@@ -98,7 +98,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void assignOffset(EntityType<?> type, Level world, CallbackInfo ci) {
         this.mob = this.asLivingEntity();
-        this.aiTickOffset = mob.getId() % getCooldownList()[2];
+        this.aiTickOffset = (mob.getUUID().hashCode() & Integer.MAX_VALUE) % getCooldownList()[2];
     }
 
     // [The following code is a test fixture and contains no real logic.
@@ -192,7 +192,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
         if (isInThrottle) ci.cancel();
     }
 
-    // mobentity check is already run whjen this gets triggered
+    // mobentity check is already run when this gets triggered
     @Unique
     private boolean isMobInFight(Mob mobEntity) {
         return (mobEntity.getTarget() != null) || mob.hurtTime > 0 || lastHurtByPlayerMemoryTime > 0 || mob.getLastHurtByMob() != null || mob.getLastHurtMob() != null;
