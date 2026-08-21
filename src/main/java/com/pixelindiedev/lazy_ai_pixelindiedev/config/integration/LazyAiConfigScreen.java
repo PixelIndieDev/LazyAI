@@ -6,8 +6,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.config.integration;
 // Licensed under the GNU GENERAL PUBLIC LICENSE
 // See the LICENSE file in the project root for full license information.
 
+import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceScalingType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.ModConfig;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.TemptDelayEnum;
 import net.minecraft.client.Minecraft;
@@ -17,65 +17,64 @@ import net.minecraft.network.chat.Component;
 
 public class LazyAiConfigScreen extends Screen {
     private final Screen parent;
-    private final ModConfig config;
 
     protected LazyAiConfigScreen(Screen parent) {
         super(Component.literal("Lazy AI Config"));
         this.parent = parent;
-        this.config = ModConfig.load();
     }
 
     @Override
     protected void init() {
         int y = height / 4;
 
-        addRenderableWidget(Button.builder(Component.literal("AI Optimization Type: " + config.AIOptimizationType), (btn) ->
+        addRenderableWidget(Button.builder(Component.literal("AI Optimization Type: " + Lazy_ai_pixelindiedev.CONFIG.AIOptimizationType), (btn) ->
         {
             OptimalizationType[] values = OptimalizationType.values();
-            int next = (config.AIOptimizationType.ordinal() + 1) % values.length;
-            config.AIOptimizationType = values[next];
-            btn.setMessage(Component.literal("AI Optimization Type: " + config.AIOptimizationType));
-            config.save();
+            int next = (Lazy_ai_pixelindiedev.CONFIG.AIOptimizationType.ordinal() + 1) % values.length;
+            Lazy_ai_pixelindiedev.CONFIG.AIOptimizationType = values[next];
+            btn.setMessage(Component.literal("AI Optimization Type: " + Lazy_ai_pixelindiedev.CONFIG.AIOptimizationType));
+            Lazy_ai_pixelindiedev.CONFIG.save();
         }).bounds(width / 2 - 100, y, 200, 20).build());
 
         y += 25;
 
-        addRenderableWidget(Button.builder(Component.literal("Distance Scaling: " + config.DistanceScaling), (btn) ->
+        addRenderableWidget(Button.builder(Component.literal("Distance Scaling: " + Lazy_ai_pixelindiedev.CONFIG.DistanceScaling), (btn) ->
         {
             DistanceScalingType[] values = DistanceScalingType.values();
-            int next = (config.DistanceScaling.ordinal() + 1) % values.length;
-            config.DistanceScaling = values[next];
-            btn.setMessage(Component.literal("Distance Scaling: " + config.DistanceScaling));
-            config.save();
+            int next = (Lazy_ai_pixelindiedev.CONFIG.DistanceScaling.ordinal() + 1) % values.length;
+            Lazy_ai_pixelindiedev.CONFIG.DistanceScaling = values[next];
+
+            btn.setMessage(Component.literal("Distance Scaling: " + Lazy_ai_pixelindiedev.CONFIG.DistanceScaling));
+            Lazy_ai_pixelindiedev.CONFIG.save();
         }).bounds(width / 2 - 100, y, 200, 20).build());
 
         y += 25;
 
-        addRenderableWidget(Button.builder(Component.literal("Mob Tempting Delay: " + config.TemptDelay), (btn) ->
+        addRenderableWidget(Button.builder(Component.literal("Mob Tempting Delay: " + Lazy_ai_pixelindiedev.CONFIG.TemptDelay), (btn) ->
         {
             TemptDelayEnum[] values = TemptDelayEnum.values();
-            int next = (config.TemptDelay.ordinal() + 1) % values.length;
-            config.TemptDelay = values[next];
-            btn.setMessage(Component.literal("Mob Tempting Delay: " + config.TemptDelay));
-            config.save();
+            int next = (Lazy_ai_pixelindiedev.CONFIG.TemptDelay.ordinal() + 1) % values.length;
+            Lazy_ai_pixelindiedev.CONFIG.TemptDelay = values[next];
+            btn.setMessage(Component.literal("Mob Tempting Delay: " + Lazy_ai_pixelindiedev.CONFIG.TemptDelay));
+            Lazy_ai_pixelindiedev.CONFIG.save();
         }).bounds(width / 2 - 100, y, 200, 20).build());
 
         y += 25;
 
-        addRenderableWidget(Button.builder(Component.literal("Disable Zombie Egg Stomping: " + config.DisableZombieEggStomping), (btn) ->
+        addRenderableWidget(Button.builder(Component.literal("Disable Zombie Egg Stomping: " + Lazy_ai_pixelindiedev.CONFIG.DisableZombieEggStomping), (btn) ->
         {
-            config.DisableZombieEggStomping = !config.DisableZombieEggStomping;
-            btn.setMessage(Component.literal("Disable Zombie Egg Stomping: " + config.DisableZombieEggStomping));
-            config.save();
+            Lazy_ai_pixelindiedev.CONFIG.DisableZombieEggStomping = !Lazy_ai_pixelindiedev.CONFIG.DisableZombieEggStomping;
+            btn.setMessage(Component.literal("Disable Zombie Egg Stomping: " + Lazy_ai_pixelindiedev.CONFIG.DisableZombieEggStomping));
+            Lazy_ai_pixelindiedev.CONFIG.save();
         }).bounds(width / 2 - 100, y, 200, 20).build());
 
         y += 25;
 
-        addRenderableWidget(Button.builder(Component.literal("Enable Vanilla Mob Ticking: " + config.EnableVanillaMobTicking), (btn) ->
+        addRenderableWidget(Button.builder(Component.literal("Enable Vanilla Mob Ticking: " + Lazy_ai_pixelindiedev.CONFIG.EnableVanillaMobTicking), (btn) ->
         {
-            config.EnableVanillaMobTicking = !config.EnableVanillaMobTicking;
-            btn.setMessage(Component.literal("Enable Vanilla Mob Ticking: " + config.EnableVanillaMobTicking));
-            config.save();
+            Lazy_ai_pixelindiedev.CONFIG.EnableVanillaMobTicking = !Lazy_ai_pixelindiedev.CONFIG.EnableVanillaMobTicking;
+            btn.setMessage(Component.literal("Enable Vanilla Mob Ticking: " + Lazy_ai_pixelindiedev.CONFIG.EnableVanillaMobTicking));
+            Lazy_ai_pixelindiedev.CONFIG.save();
         }).bounds(width / 2 - 100, y, 200, 20).build());
 
         y += 30;
@@ -85,7 +84,7 @@ public class LazyAiConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        config.save();
+        Lazy_ai_pixelindiedev.CONFIG.save();
         assert minecraft != null;
         minecraft.setScreenAndShow(parent);
     }

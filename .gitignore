@@ -3,3 +3,5 @@ run/
 .gradle/
 gradle/
 build/
+
+patch notes.txt

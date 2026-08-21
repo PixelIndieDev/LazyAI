@@ -23,10 +23,6 @@ public class ModConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger("LazyAI");
     public DistanceScalingType DistanceScaling = ModConfigDefaults.Defaults_DistanceScaling;
     public OptimalizationType AIOptimizationType = ModConfigDefaults.Defaults_AIOptimizationType;
-    //    Distance in squared blocks
-    //    distance is based on simulation distance
-    public int BlockDistance_Close = ModConfigDefaults.Defaults_BlockDistance_Close;
-    public int BlockDistance_Far = ModConfigDefaults.Defaults_BlockDistance_Far;
     public TemptDelayEnum TemptDelay = ModConfigDefaults.Defaults_TemptDelay;
     public boolean DisableZombieEggStomping = ModConfigDefaults.Defaults_DisableZombieEggStomping;
     public boolean EnableVanillaMobTicking = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
@@ -68,18 +64,6 @@ public class ModConfig {
             var value = ModConfigDefaults.Defaults_AIOptimizationType.name();
             LOGGER.warn("Missing option 'AIOptimizationType', adding default (" + value + ").");
             obj.addProperty("AIOptimizationType", value);
-            changed = true;
-        }
-        if (!obj.has("BlockDistance_Close")) {
-            var value = ModConfigDefaults.Defaults_BlockDistance_Close;
-            LOGGER.warn("Missing option 'BlockDistance_Close', adding default (" + value + ").");
-            obj.addProperty("BlockDistance_Close", value);
-            changed = true;
-        }
-        if (!obj.has("BlockDistance_Far")) {
-            var value = ModConfigDefaults.Defaults_BlockDistance_Far;
-            LOGGER.warn("Missing option 'BlockDistance_Far', adding default (" + value + ").");
-            obj.addProperty("BlockDistance_Far", value);
             changed = true;
         }
         if (!obj.has("TemptDelay")) {

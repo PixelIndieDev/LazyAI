@@ -1,5 +1,6 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev;
 
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.BlockDistancesHelper;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.ModConfig;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
@@ -79,13 +80,13 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     public static DistanceType GetClosestPlayerDistance(LivingEntity mob) {
         if (mob == null) return DistanceType.FarRange;
 
-        final Player closestPlayer = mob.level().getNearestPlayer(mob, CONFIG.BlockDistance_Far);
+        final Player closestPlayer = mob.level().getNearestPlayer(mob, BlockDistancesHelper.BlockDistance_Far);
         if (closestPlayer == null) return DistanceType.FarRange;
 
         final double distancebetween = mob.distanceToSqr(closestPlayer);
 
-        if (distancebetween >= CONFIG.BlockDistance_Far) return DistanceType.FarRange;
-        else if (distancebetween >= CONFIG.BlockDistance_Close) return DistanceType.MediumRange;
+        if (distancebetween >= BlockDistancesHelper.BlockDistance_Far) return DistanceType.FarRange;
+        else if (distancebetween >= BlockDistancesHelper.BlockDistance_Close) return DistanceType.MediumRange;
         else return DistanceType.CloseRange;
     }
 
@@ -140,10 +141,15 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         } else return null;
     }
 
+    public static void UpdateDistanceValues() {
+        BlockDistancesHelper.SetBlockDistances(CONFIG.getBlockDistance_Close_Multiplier(), CONFIG.getBlockDistance_Far_Multiplier());
+    }
+
     @Override
     public void onInitialize() {
         ServerTickEvents.START_SERVER_TICK.register(Lazy_ai_pixelindiedev::onServerTick);
         CONFIG = ModConfig.load();
+        UpdateDistanceValues();
 
         initializeCacheAsync();
     }
