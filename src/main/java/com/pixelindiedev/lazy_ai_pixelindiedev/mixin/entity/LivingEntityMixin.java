@@ -4,6 +4,8 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.EntityClassificationer;
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.CriticalTPSModeEnum;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.EntityCategoryEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.TickCancellingAware;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.EntityAccessor;
 import net.minecraft.resources.ResourceKey;
@@ -22,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.pixelindiedev.lazy_ai_pixelindiedev.EntityClassificationer.GetEntityCategory;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.CriticalTPSMode;
 
 @Mixin(value = LivingEntity.class, priority = 900)
@@ -79,7 +82,15 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     private ResourceKey<EntityType<?>> cachedType;
     @Unique
     private int waitingForCramming;
+    @Unique
     private boolean isWaiting = false;
+    @Unique
+    private EntityCategoryEnum cachedCategory;
+
+    @Unique
+    private OptimalizationType lastOptType;
+    @Unique
+    private int[] cachedCooldownList;
 
     @Override
     public int lazy_ai$getSkippedTicks() {
@@ -98,21 +109,26 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Inject(method = "pushEntities", at = @At("HEAD"), cancellable = true)
     private void limitCramming(CallbackInfo ci) {
         int ordinalToCheck;
-        if (EntityClassificationer.CanBePet(cachedType)) {
-            if (mob instanceof TamableAnimal tameable)
-                ordinalToCheck = (tameable.isTame() && tameable.isOrderedToSit()) ? CriticalTPSModeEnum.Low.ordinal() : CriticalTPSModeEnum.Normal.ordinal();
-            else ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
-            isWaiting = false;
-        } else if (EntityClassificationer.IsEntityFarmAnimal(cachedType)) {
-            ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
-            isWaiting = true;
-            waitingForCramming++;
-        } else if (EntityClassificationer.IsAmbientAnimal(cachedType)) {
-            ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
-            isWaiting = false;
-        } else {
-            ordinalToCheck = CriticalTPSModeEnum.Severe.ordinal();
-            isWaiting = false;
+        switch (cachedCategory) {
+            case Pet -> {
+                if (mob instanceof TamableAnimal tameable)
+                    ordinalToCheck = (tameable.isTame() && tameable.isOrderedToSit()) ? CriticalTPSModeEnum.Low.ordinal() : CriticalTPSModeEnum.Normal.ordinal();
+                else ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
+                isWaiting = false;
+            }
+            case Farm -> {
+                ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
+                isWaiting = true;
+                waitingForCramming++;
+            }
+            case Ambient -> {
+                ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
+                isWaiting = false;
+            }
+            default -> {
+                ordinalToCheck = CriticalTPSModeEnum.Severe.ordinal();
+                isWaiting = false;
+            }
         }
 
         int currentTpsMode = CriticalTPSMode.ordinal();
@@ -131,6 +147,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     private void assignOffset(EntityType<?> type, Level world, CallbackInfo ci) {
         this.mob = this.asLivingEntity();
         cachedType = type.builtInRegistryHolder().key();
+        cachedCategory = GetEntityCategory(cachedType);
         this.aiTickOffset = (mob.getUUID().hashCode() & Integer.MAX_VALUE) % getCooldownList()[2];
         waitingForCramming = aiTickOffset;
     }
@@ -147,10 +164,11 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
         final int baseInterval = theList[distOrdinal];
 
         int ordinalToCheck;
-        if (EntityClassificationer.IsEntityFarmAnimal(cachedType))
-            ordinalToCheck = CriticalTPSModeEnum.Moderate.ordinal();
-        else if (EntityClassificationer.IsAmbientAnimal(cachedType)) ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
-        else ordinalToCheck = CriticalTPSModeEnum.Severe.ordinal();
+        switch (cachedCategory) {
+            case Farm -> ordinalToCheck = CriticalTPSModeEnum.Moderate.ordinal();
+            case Ambient -> ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
+            default -> ordinalToCheck = CriticalTPSModeEnum.Severe.ordinal();
+        }
 
         final int interval;
         if (CriticalTPSMode.ordinal() > ordinalToCheck) interval = (int) (baseInterval * (0.95 * distOrdinal + 0.15));
@@ -238,10 +256,15 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != lastOptType) {
+            lastOptType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }
