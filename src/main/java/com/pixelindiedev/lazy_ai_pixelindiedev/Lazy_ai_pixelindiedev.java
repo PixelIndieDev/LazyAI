@@ -1,9 +1,6 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev;
 
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.BlockDistancesHelper;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.ModConfig;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
@@ -16,6 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.initializeCacheAsync;
+import static com.pixelindiedev.lazy_ai_pixelindiedev.config.LoggerHolder.MODLOGGER;
 
 public class Lazy_ai_pixelindiedev implements ModInitializer {
 
@@ -33,10 +31,27 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     // -----------------------------
 
     private static final Map<UUID, DistanceType> cache = new ConcurrentHashMap<>();
+    private static final CriticalTPSModeEnum[] CriticalEnumValues = CriticalTPSModeEnum.values();
+    private static final double[] MSPerCriticalMode;
     public static ModConfig CONFIG;
-    public static boolean EnableCriticalTPSMode = false;
-    private static float Server_TPS_MS = 50.0f; //in ms
+    public static CriticalTPSModeEnum CriticalTPSMode = CriticalTPSModeEnum.Normal;
+    private static double Server_TPS_MS = 50.0f; //in ms
     private static int lastTick = -1;
+
+    static {
+        MSPerCriticalMode = new double[CriticalEnumValues.length];
+
+        final float stepsize = 1.1f;
+        float ticks = 20.0f;
+        for (CriticalTPSModeEnum mode : CriticalEnumValues) {
+            MSPerCriticalMode[mode.ordinal()] = tpsToMs(ticks);
+            ticks -= stepsize;
+        }
+    }
+
+    private static double tpsToMs(float tps) {
+        return 1000.0 / tps;
+    }
 
     public static void onServerTick(MinecraftServer server) {
         if (CONFIG.lastModified == 0L) CONFIG.lastModified = ModConfig.configFile.lastModified();
@@ -56,16 +71,20 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
                     }
                 }
 
-                final float MSPerTick;
+                final double MSPerTick;
                 if (sum <= 0.0)
-                    MSPerTick = 58.8f; //Make it use the default setting temporarily before it has the valid tick times
-                else MSPerTick = (sum / tickTimesLength) * 1.0e-6f;
+                    MSPerTick = 58.8; //Make it use the default setting temporarily before it has the valid tick times
+                else MSPerTick = (sum / tickTimesLength) * 1.0e-6;
 
                 Server_TPS_MS = MSPerTick;
+                CriticalTPSMode = GetCurrentCriticalMode(Server_TPS_MS);
             }
+        } else if (CONFIG.AIOptimizationType == OptimalizationType.Agressive)
+            CriticalTPSMode = CriticalTPSModeEnum.Moderate;
+        else if (CONFIG.AIOptimizationType == OptimalizationType.Moderate) CriticalTPSMode = CriticalTPSModeEnum.Low;
+        else CriticalTPSMode = CriticalTPSModeEnum.Normal;
 
-            EnableCriticalTPSMode = Server_TPS_MS > 76.92f;
-        }
+        MODLOGGER.info("CriticalTPSMode = " + CriticalTPSMode);
 
         if (currentTick != lastTick) {
             cache.clear();
@@ -75,6 +94,16 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         if (CONFIG.hasExternalChange()) {
             CONFIG = ModConfig.load();
         }
+    }
+
+    private static CriticalTPSModeEnum GetCurrentCriticalMode(double serverTps) {
+        int length = MSPerCriticalMode.length - 1;
+        for (int i = length; i >= 0; i--) {
+            if (serverTps >= MSPerCriticalMode[i]) {
+                return CriticalEnumValues[Math.min(i + 1, length)];
+            }
+        }
+        return CriticalEnumValues[0];
     }
 
     public static DistanceType GetClosestPlayerDistance(LivingEntity mob) {

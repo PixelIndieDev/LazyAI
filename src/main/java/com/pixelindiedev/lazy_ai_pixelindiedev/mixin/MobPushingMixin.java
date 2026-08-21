@@ -7,6 +7,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.CriticalTPSModeEnum;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.EnableCriticalTPSMode;
+import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.CriticalTPSMode;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.GetMobEntity;
 
 @Mixin(LivingEntity.class)
@@ -44,7 +45,7 @@ public abstract class MobPushingMixin {
 
     @Inject(method = "push(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
     private void ThrottlePush(Entity other, CallbackInfo ci) {
-        if (EnableCriticalTPSMode) ci.cancel();
+        if (CriticalTPSMode.ordinal() > CriticalTPSModeEnum.Moderate.ordinal()) ci.cancel();
 
         if (mob != null) {
             DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(mob);
