@@ -1,6 +1,5 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.entity;
 
-import com.pixelindiedev.lazy_ai_pixelindiedev.EntityClassificationer;
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.CriticalTPSModeEnum;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
@@ -88,7 +87,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     private EntityCategoryEnum cachedCategory;
 
     @Unique
-    private OptimalizationType lastOptType;
+    private OptimalizationType cachedOptiType;
     @Unique
     private int[] cachedCooldownList;
 
@@ -257,8 +256,8 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Unique
     private int[] getCooldownList() {
         final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
-        if (current != lastOptType) {
-            lastOptType = current;
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
             cachedCooldownList = switch (current) {
                 case Minimal -> cooldownsMinimal;
                 case Agressive -> cooldownsAgressive;
