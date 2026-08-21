@@ -7,6 +7,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.entity;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.VillagerCacheAccessor;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.VillagerEntityAccessor;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
@@ -62,6 +63,11 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     private Holder<VillagerProfession> cachedProfessionEntry;
     @Unique
     private ResourceKey<VillagerProfession> cachedProfessionKey;
+
+    @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
 
     @Shadow
     protected abstract void stopTrading();
@@ -196,10 +202,15 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }
