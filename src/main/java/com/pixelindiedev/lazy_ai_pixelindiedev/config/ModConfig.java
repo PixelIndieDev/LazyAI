@@ -20,18 +20,16 @@ public class ModConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "lazy-ai.json";
     public static final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
-
-    public DistanceScalingType DistanceScaling = ModConfigDefaults.Defaults_DistanceScaling;
     private final String _comment_DistanceScaling = "This setting controls what % range of your simulation distance is considered close and far range";
-    public OptimalizationType AIOptimizationType = ModConfigDefaults.Defaults_AIOptimizationType;
     private final String _comment_AIOptimizationType = "This settings controls how aggressive the optimizations should be";
-    public TemptDelayEnum TemptDelay = ModConfigDefaults.Defaults_TemptDelay;
     private final String _comment_TemptDelay = "This setting controls how much delay animals have to being tempted by an item";
-    public boolean DisableZombieEggStomping = ModConfigDefaults.Defaults_DisableZombieEggStomping;
     private final String _comment_DisableZombieEggStomping = "This setting controls the prevention of zombies wanting to destroy turtle eggs";
-    public boolean EnableVanillaMobTicking = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
     private final String _comment_EnableVanillaMobTicking = "This setting controls if distant mobs should tick the same as in a unmodded (vanilla) game. Enabling this reduces the mod's TPS-boosting effect on your game, but can fix mob ticking issues.";
-
+    public DistanceScalingType DistanceScaling = ModConfigDefaults.Defaults_DistanceScaling;
+    public OptimalizationType AIOptimizationType = ModConfigDefaults.Defaults_AIOptimizationType;
+    public TemptDelayEnum TemptDelay = ModConfigDefaults.Defaults_TemptDelay;
+    public boolean DisableZombieEggStomping = ModConfigDefaults.Defaults_DisableZombieEggStomping;
+    public boolean EnableVanillaMobTicking = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
     public transient long lastModified = 0L;
 
     // LazyAI

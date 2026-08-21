@@ -8,6 +8,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.navigation;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -35,6 +36,10 @@ public class EntityNavigationMixin {
     @Final
     protected Level level;
     @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
+    @Unique
     private int cooldown = 0;
     @Unique
     private DistanceType previousDistanceType = DistanceType.FarRange;
@@ -59,10 +64,15 @@ public class EntityNavigationMixin {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }

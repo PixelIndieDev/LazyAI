@@ -8,6 +8,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.FollowMobGoal;
 import org.spongepowered.asm.mixin.Final;
@@ -26,6 +27,11 @@ public class FollowMobGoalMixin {
     private final static int[] cooldownsAgressive = {15, 30, 80};
     @Unique
     private final static int[] cooldownsMinimal = {5, 10, 30};
+    @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
+
     @Final
     @Shadow
     private Mob mob;
@@ -52,10 +58,15 @@ public class FollowMobGoalMixin {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }

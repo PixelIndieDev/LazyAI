@@ -7,6 +7,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.brain;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -27,6 +28,11 @@ public class BrainMixin<E extends LivingEntity> {
     @Unique
     private final static int[] cooldownsMinimal = {1, 2, 5};
 
+    @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
+
     @Inject(method = "tickSensors", at = @At("HEAD"), cancellable = true)
     private void throttleSensors(ServerLevel world, E entity, CallbackInfo ci) {
         if (!(entity instanceof Mob mob)) return;
@@ -41,10 +47,15 @@ public class BrainMixin<E extends LivingEntity> {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }

@@ -7,12 +7,15 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.config.EntityCategoryEnum;
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.TickCancellingAware;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.EntityAccessor;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
@@ -25,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.EntityClassificationer.GetEntityCategory;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.CriticalTPSMode;
+import static com.pixelindiedev.lazy_ai_pixelindiedev.config.ThrottleHelper.ShouldThrottlePushing;
 
 @Mixin(value = LivingEntity.class, priority = 900)
 public abstract class LivingEntityMixin implements TickCancellingAware {
@@ -78,11 +82,8 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Unique
     private int cachedBaseMovementSkip;
     @Unique
-    private ResourceKey<EntityType<?>> cachedType;
-    @Unique
     private int waitingForCramming;
-    @Unique
-    private boolean isWaiting = false;
+
     @Unique
     private EntityCategoryEnum cachedCategory;
 
@@ -107,46 +108,17 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
 
     @Inject(method = "pushEntities", at = @At("HEAD"), cancellable = true)
     private void limitCramming(CallbackInfo ci) {
-        int ordinalToCheck;
-        switch (cachedCategory) {
-            case Pet -> {
-                if (mob instanceof TamableAnimal tameable)
-                    ordinalToCheck = (tameable.isTame() && tameable.isOrderedToSit()) ? CriticalTPSModeEnum.Low.ordinal() : CriticalTPSModeEnum.Normal.ordinal();
-                else ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
-                isWaiting = false;
-            }
-            case Farm -> {
-                ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
-                isWaiting = true;
-                waitingForCramming++;
-            }
-            case Ambient -> {
-                ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
-                isWaiting = false;
-            }
-            default -> {
-                ordinalToCheck = CriticalTPSModeEnum.Severe.ordinal();
-                isWaiting = false;
-            }
+        var shouldResult = ShouldThrottlePushing(cachedCategory, mob, waitingForCramming, aiTickOffset);
+        if (shouldResult.shouldThrottle()) {
+            ci.cancel();
         }
-
-        int currentTpsMode = CriticalTPSMode.ordinal();
-        if (currentTpsMode > ordinalToCheck) {
-            if (!isWaiting) {
-                ci.cancel();
-                waitingForCramming = aiTickOffset;
-            }
-            if (waitingForCramming < (currentTpsMode * 40)) {
-                ci.cancel();
-            } else waitingForCramming = aiTickOffset;
-        }
+        waitingForCramming = shouldResult.newWaitingForCramming();
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void assignOffset(EntityType<?> type, Level world, CallbackInfo ci) {
         this.mob = this.asLivingEntity();
-        cachedType = type.builtInRegistryHolder().key();
-        cachedCategory = GetEntityCategory(cachedType);
+        cachedCategory = GetEntityCategory(BuiltInRegistries.ENTITY_TYPE.getResourceKey(type).orElseThrow());
         this.aiTickOffset = (mob.getUUID().hashCode() & Integer.MAX_VALUE) % getCooldownList()[2];
         waitingForCramming = aiTickOffset;
     }

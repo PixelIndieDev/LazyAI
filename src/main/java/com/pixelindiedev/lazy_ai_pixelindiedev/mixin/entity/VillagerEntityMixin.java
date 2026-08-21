@@ -33,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.hasSolidCollision;
-import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.getOptimalizationType;
 
 @Mixin(Villager.class)
 public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
