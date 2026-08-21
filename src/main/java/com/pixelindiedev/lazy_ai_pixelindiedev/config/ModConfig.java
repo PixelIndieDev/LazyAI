@@ -20,11 +20,18 @@ public class ModConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "lazy-ai.json";
     public static final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
+
     public DistanceScalingType DistanceScaling = ModConfigDefaults.Defaults_DistanceScaling;
+    private final String _comment_DistanceScaling = "This setting controls what % range of your simulation distance is considered close and far range";
     public OptimalizationType AIOptimizationType = ModConfigDefaults.Defaults_AIOptimizationType;
+    private final String _comment_AIOptimizationType = "This settings controls how aggressive the optimizations should be";
     public TemptDelayEnum TemptDelay = ModConfigDefaults.Defaults_TemptDelay;
+    private final String _comment_TemptDelay = "This setting controls how much delay animals have to being tempted by an item";
     public boolean DisableZombieEggStomping = ModConfigDefaults.Defaults_DisableZombieEggStomping;
+    private final String _comment_DisableZombieEggStomping = "This setting controls the prevention of zombies wanting to destroy turtle eggs";
     public boolean EnableVanillaMobTicking = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
+    private final String _comment_EnableVanillaMobTicking = "This setting controls if distant mobs should tick the same as in a unmodded (vanilla) game. Enabling this reduces the mod's TPS-boosting effect on your game, but can fix mob ticking issues.";
+
     public transient long lastModified = 0L;
 
     // LazyAI
@@ -57,30 +64,35 @@ public class ModConfig {
             var value = ModConfigDefaults.Defaults_DistanceScaling.name();
             MODLOGGER.warn("Missing option 'DistanceScaling', adding default (" + value + ").");
             obj.addProperty("DistanceScaling", value);
+            obj.addProperty("_comment_DistanceScaling", config._comment_DistanceScaling);
             changed = true;
         }
         if (!obj.has("AIOptimizationType")) {
             var value = ModConfigDefaults.Defaults_AIOptimizationType.name();
             MODLOGGER.warn("Missing option 'AIOptimizationType', adding default (" + value + ").");
             obj.addProperty("AIOptimizationType", value);
+            obj.addProperty("_comment_AIOptimizationType", config._comment_AIOptimizationType);
             changed = true;
         }
         if (!obj.has("TemptDelay")) {
             var value = ModConfigDefaults.Defaults_TemptDelay.name();
             MODLOGGER.warn("Missing option 'TemptDelay', adding default (" + value + ").");
             obj.addProperty("TemptDelay", value);
+            obj.addProperty("_comment_TemptDelay", config._comment_TemptDelay);
             changed = true;
         }
         if (!obj.has("DisableZombieEggStomping")) {
             var value = ModConfigDefaults.Defaults_DisableZombieEggStomping;
             MODLOGGER.warn("Missing option 'DisableZombieEggStomping', adding default (" + value + ").");
             obj.addProperty("DisableZombieEggStomping", value);
+            obj.addProperty("_comment_DisableZombieEggStomping", config._comment_DisableZombieEggStomping);
             changed = true;
         }
         if (!obj.has("EnableVanillaMobTicking")) {
             var value = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
             MODLOGGER.warn("Missing option 'EnableVanillaMobTicking', adding default (" + value + ").");
             obj.addProperty("EnableVanillaMobTicking", value);
+            obj.addProperty("_comment_EnableVanillaMobTicking", config._comment_EnableVanillaMobTicking);
             changed = true;
         }
 
