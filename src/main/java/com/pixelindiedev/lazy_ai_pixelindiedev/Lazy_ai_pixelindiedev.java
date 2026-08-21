@@ -125,10 +125,6 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         return cache.computeIfAbsent(mob.getUUID(), id -> GetClosestPlayerDistance(mob));
     }
 
-    public static int squaredBlocksToChunks(int squaredBlockDistance, int multiplier) {
-        return (int) (Math.round((Math.sqrt(squaredBlockDistance) * multiplier) / 16.0));
-    }
-
     public static int chunksToSquaredBlocks(int chunkRadius, int multiplier) {
         final int blocks = (chunkRadius * 16) / multiplier;
         return blocks * blocks;
