@@ -13,19 +13,19 @@ public class EntityClassificationer {
         else return EntityCategoryEnum.Other;
     }
 
-    public static boolean IsEntityFarmAnimal(ResourceKey<EntityType<?>> type) {
+    private static boolean IsEntityFarmAnimal(ResourceKey<EntityType<?>> type) {
         return (type == EntityTypeIds.PIG || type == EntityTypeIds.SHEEP || type == EntityTypeIds.COW || type == EntityTypeIds.CHICKEN);
     }
 
-    public static boolean IsAmbientAnimal(ResourceKey<EntityType<?>> type) {
+    private static boolean IsAmbientAnimal(ResourceKey<EntityType<?>> type) {
         return (IsWaterAmbientAnimal(type) || type == EntityTypeIds.BAT || type == EntityTypeIds.PARROT || type == EntityTypeIds.BEE);
     }
 
-    public static boolean IsWaterAmbientAnimal(ResourceKey<EntityType<?>> type) {
+    private static boolean IsWaterAmbientAnimal(ResourceKey<EntityType<?>> type) {
         return (type == EntityTypeIds.AXOLOTL || type == EntityTypeIds.COD || type == EntityTypeIds.GLOW_SQUID || type == EntityTypeIds.SQUID || type == EntityTypeIds.SALMON || type == EntityTypeIds.TADPOLE || type == EntityTypeIds.TROPICAL_FISH);
     }
 
-    public static boolean CanBePet(ResourceKey<EntityType<?>> type) {
+    private static boolean CanBePet(ResourceKey<EntityType<?>> type) {
         return (type == EntityTypeIds.CAT || type == EntityTypeIds.WOLF);
     }
 }
