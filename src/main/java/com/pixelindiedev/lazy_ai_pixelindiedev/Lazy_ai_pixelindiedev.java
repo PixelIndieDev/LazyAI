@@ -84,8 +84,6 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         else if (CONFIG.AIOptimizationType == OptimalizationType.Moderate) CriticalTPSMode = CriticalTPSModeEnum.Low;
         else CriticalTPSMode = CriticalTPSModeEnum.Normal;
 
-        MODLOGGER.info("CriticalTPSMode = " + CriticalTPSMode);
-
         if (currentTick != lastTick) {
             cache.clear();
             lastTick = currentTick;
