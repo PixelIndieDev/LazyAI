@@ -7,7 +7,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.LookControl;
 import org.spongepowered.asm.mixin.Final;

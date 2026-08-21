@@ -1,5 +1,8 @@
-package com.pixelindiedev.lazy_ai_pixelindiedev.config;
+package com.pixelindiedev.lazy_ai_pixelindiedev.helpers;
 
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.CriticalTPSModeEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.EntityCategoryEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.records.ThrottleResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 

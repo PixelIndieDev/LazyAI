@@ -7,9 +7,9 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.config.integration;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceScalingType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.TemptDelayEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceScalingType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.TemptDelayEnum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;

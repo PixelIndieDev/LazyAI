@@ -1,4 +1,4 @@
-package com.pixelindiedev.lazy_ai_pixelindiedev.config;
+package com.pixelindiedev.lazy_ai_pixelindiedev.helpers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

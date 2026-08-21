@@ -7,10 +7,10 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.CriticalTPSModeEnum;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.EntityCategoryEnum;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.CriticalTPSModeEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.EntityCategoryEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.EntityClassificationer.GetEntityCategory;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.CriticalTPSMode;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.GetMobEntity;
-import static com.pixelindiedev.lazy_ai_pixelindiedev.config.ThrottleHelper.ShouldThrottlePushing;
+import static com.pixelindiedev.lazy_ai_pixelindiedev.helpers.ThrottleHelper.ShouldThrottlePushing;
 
 @Mixin(LivingEntity.class)
 public abstract class MobPushingMixin {

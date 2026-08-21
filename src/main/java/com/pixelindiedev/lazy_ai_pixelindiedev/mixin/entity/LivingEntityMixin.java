@@ -1,10 +1,10 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.entity;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.CriticalTPSModeEnum;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.EntityCategoryEnum;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.CriticalTPSModeEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.EntityCategoryEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.TickCancellingAware;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.EntityAccessor;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.EntityClassificationer.GetEntityCategory;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.CriticalTPSMode;
-import static com.pixelindiedev.lazy_ai_pixelindiedev.config.ThrottleHelper.ShouldThrottlePushing;
+import static com.pixelindiedev.lazy_ai_pixelindiedev.helpers.ThrottleHelper.ShouldThrottlePushing;
 
 @Mixin(value = LivingEntity.class, priority = 900)
 public abstract class LivingEntityMixin implements TickCancellingAware {

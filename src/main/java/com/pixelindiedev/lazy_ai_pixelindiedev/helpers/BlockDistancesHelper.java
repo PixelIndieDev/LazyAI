@@ -1,6 +1,7 @@
-package com.pixelindiedev.lazy_ai_pixelindiedev.config;
+package com.pixelindiedev.lazy_ai_pixelindiedev.helpers;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.ModConfigDefaults;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.chunksToSquaredBlocks;
 

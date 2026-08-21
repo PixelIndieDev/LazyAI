@@ -6,7 +6,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 // Licensed under the GNU GENERAL PUBLIC LICENSE
 // See the LICENSE file in the project root for full license information.
 
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.BlockDistancesHelper;
+import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.BlockDistancesHelper;
 import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

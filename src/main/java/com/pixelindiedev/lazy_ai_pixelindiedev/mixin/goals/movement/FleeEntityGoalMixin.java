@@ -7,8 +7,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import org.spongepowered.asm.mixin.Final;

@@ -1,6 +1,10 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.config.*;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.CriticalTPSModeEnum;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.BlockDistancesHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;

@@ -7,6 +7,9 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.config;
 // See the LICENSE file in the project root for full license information.
 
 import com.google.gson.*;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceScalingType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.TemptDelayEnum;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
@@ -14,7 +17,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static com.pixelindiedev.lazy_ai_pixelindiedev.config.LoggerHolder.MODLOGGER;
+import static com.pixelindiedev.lazy_ai_pixelindiedev.helpers.LoggerHolder.MODLOGGER;
 
 public class ModConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
