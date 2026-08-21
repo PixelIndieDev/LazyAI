@@ -8,19 +8,18 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.config;
 
 import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import static com.pixelindiedev.lazy_ai_pixelindiedev.config.LoggerHolder.MODLOGGER;
+
 public class ModConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "lazy-ai.json";
     public static final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
-    private static final Logger LOGGER = LoggerFactory.getLogger("LazyAI");
     public DistanceScalingType DistanceScaling = ModConfigDefaults.Defaults_DistanceScaling;
     public OptimalizationType AIOptimizationType = ModConfigDefaults.Defaults_AIOptimizationType;
     public TemptDelayEnum TemptDelay = ModConfigDefaults.Defaults_TemptDelay;
@@ -44,11 +43,11 @@ public class ModConfig {
                 JsonElement element = JsonParser.parseReader(reader);
                 if (element.isJsonObject()) obj = element.getAsJsonObject();
             } catch (IOException e) {
-                LOGGER.error("Failed to read config, restoring defaults.", e);
+                MODLOGGER.error("Failed to read config, restoring defaults.", e);
                 config = new ModConfig();
             }
         } else {
-            LOGGER.warn("Config file not found, creating a new one.");
+            MODLOGGER.warn("Config file not found, creating a new one.");
             config = new ModConfig();
             changed = true;
         }
@@ -56,31 +55,31 @@ public class ModConfig {
         // Check for missing options
         if (!obj.has("DistanceScaling")) {
             var value = ModConfigDefaults.Defaults_DistanceScaling.name();
-            LOGGER.warn("Missing option 'DistanceScaling', adding default (" + value + ").");
+            MODLOGGER.warn("Missing option 'DistanceScaling', adding default (" + value + ").");
             obj.addProperty("DistanceScaling", value);
             changed = true;
         }
         if (!obj.has("AIOptimizationType")) {
             var value = ModConfigDefaults.Defaults_AIOptimizationType.name();
-            LOGGER.warn("Missing option 'AIOptimizationType', adding default (" + value + ").");
+            MODLOGGER.warn("Missing option 'AIOptimizationType', adding default (" + value + ").");
             obj.addProperty("AIOptimizationType", value);
             changed = true;
         }
         if (!obj.has("TemptDelay")) {
             var value = ModConfigDefaults.Defaults_TemptDelay.name();
-            LOGGER.warn("Missing option 'TemptDelay', adding default (" + value + ").");
+            MODLOGGER.warn("Missing option 'TemptDelay', adding default (" + value + ").");
             obj.addProperty("TemptDelay", value);
             changed = true;
         }
         if (!obj.has("DisableZombieEggStomping")) {
             var value = ModConfigDefaults.Defaults_DisableZombieEggStomping;
-            LOGGER.warn("Missing option 'DisableZombieEggStomping', adding default (" + value + ").");
+            MODLOGGER.warn("Missing option 'DisableZombieEggStomping', adding default (" + value + ").");
             obj.addProperty("DisableZombieEggStomping", value);
             changed = true;
         }
         if (!obj.has("EnableVanillaMobTicking")) {
             var value = ModConfigDefaults.Defaults_EnableVanillaMobTicking;
-            LOGGER.warn("Missing option 'EnableVanillaMobTicking', adding default (" + value + ").");
+            MODLOGGER.warn("Missing option 'EnableVanillaMobTicking', adding default (" + value + ").");
             obj.addProperty("EnableVanillaMobTicking", value);
             changed = true;
         }
@@ -90,19 +89,19 @@ public class ModConfig {
         //Null check
         if (config.DistanceScaling == null) {
             var value = ModConfigDefaults.Defaults_DistanceScaling;
-            LOGGER.warn("Invalid DistanceScaling value in config, using default (" + value + ").");
+            MODLOGGER.warn("Invalid DistanceScaling value in config, using default (" + value + ").");
             config.DistanceScaling = value;
             changed = true;
         }
         if (config.AIOptimizationType == null) {
             var value = ModConfigDefaults.Defaults_AIOptimizationType;
-            LOGGER.warn("Invalid AIOptimizationType value in config, using default (" + value + ").");
+            MODLOGGER.warn("Invalid AIOptimizationType value in config, using default (" + value + ").");
             config.AIOptimizationType = value;
             changed = true;
         }
         if (config.TemptDelay == null) {
             var value = ModConfigDefaults.Defaults_TemptDelay;
-            LOGGER.warn("Invalid TemptDelay value, using default (" + value + ").");
+            MODLOGGER.warn("Invalid TemptDelay value, using default (" + value + ").");
             config.TemptDelay = value;
             changed = true;
         }
@@ -121,7 +120,7 @@ public class ModConfig {
             GSON.toJson(this, writer);
             lastModified = configFile.lastModified();
         } catch (IOException e) {
-            LOGGER.error("Failed to save config:", e);
+            MODLOGGER.error("Failed to save config:", e);
         }
     }
 
