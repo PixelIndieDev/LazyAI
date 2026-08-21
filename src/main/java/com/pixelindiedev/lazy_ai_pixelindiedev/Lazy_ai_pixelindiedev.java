@@ -13,7 +13,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.initializeCacheAsync;
-import static com.pixelindiedev.lazy_ai_pixelindiedev.config.LoggerHolder.MODLOGGER;
 
 public class Lazy_ai_pixelindiedev implements ModInitializer {
 
@@ -37,6 +36,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     public static CriticalTPSModeEnum CriticalTPSMode = CriticalTPSModeEnum.Normal;
     private static double Server_TPS_MS = 50.0f; //in ms
     private static int lastTick = -1;
+    private static int checkTickDelay = 0;
 
     static {
         MSPerCriticalMode = new double[CriticalEnumValues.length];
@@ -89,9 +89,12 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
             lastTick = currentTick;
         }
 
-        if (CONFIG.hasExternalChange()) {
-            CONFIG = ModConfig.load();
-        }
+        if (checkTickDelay > 99) {
+            checkTickDelay = 0;
+            if (CONFIG.hasExternalChange()) {
+                CONFIG = ModConfig.load();
+            }
+        } else checkTickDelay++;
     }
 
     private static CriticalTPSModeEnum GetCurrentCriticalMode(double serverTps) {
