@@ -18,6 +18,6 @@ public class EntityClassificationer {
     }
 
     public static boolean CanBePet(ResourceKey<EntityType<?>> type) {
-        return (type == EntityTypeIds.CAT);
+        return (type == EntityTypeIds.CAT || type == EntityTypeIds.WOLF);
     }
 }

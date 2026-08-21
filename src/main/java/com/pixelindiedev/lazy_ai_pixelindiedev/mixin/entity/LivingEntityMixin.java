@@ -11,10 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EntityReference;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
@@ -101,7 +98,12 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Inject(method = "pushEntities", at = @At("HEAD"), cancellable = true)
     private void limitCramming(CallbackInfo ci) {
         int ordinalToCheck;
-        if (EntityClassificationer.IsEntityFarmAnimal(cachedType)) {
+        if (EntityClassificationer.CanBePet(cachedType)) {
+            if (mob instanceof TamableAnimal tameable)
+                ordinalToCheck = (tameable.isTame() && tameable.isOrderedToSit()) ? CriticalTPSModeEnum.Low.ordinal() : CriticalTPSModeEnum.Normal.ordinal();
+            else ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
+            isWaiting = false;
+        } else if (EntityClassificationer.IsEntityFarmAnimal(cachedType)) {
             ordinalToCheck = CriticalTPSModeEnum.Low.ordinal();
             isWaiting = true;
             waitingForCramming++;
