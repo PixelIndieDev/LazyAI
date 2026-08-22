@@ -91,7 +91,7 @@ See below ↓
 ## How does the *AI Optimization Type* and *Distance Scaling* work?
 > [!NOTE]
 > This overview is a simplified explanation.
-> This mod makes use of additional smaller systems, but **AI Optimization Type** and **Distance Scaling** are the two main settings that dictate how the mod behaves.
+> This mod makes use of additional smaller systems, but **AI Optimization Type** and **Distance Scaling** are the two main systems that dictate how the mod behaves.
 
 > [!NOTE]
 > The percentages and radiuses shown in this explanation are for visual reference and do not reflect the actual numbers.
