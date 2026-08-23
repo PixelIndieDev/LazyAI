@@ -84,3 +84,32 @@ Yes, you can use this mod on a server. The mod works on both the server and the 
 
 ### Can this mod be used on a client?
 Yes, you can use this mod on a client. The mod works on both the server and the client. Clients with LazyAI can join servers without LazyAI.
+
+### How does the AI Optimization Type and Distance Scaling work?
+See below ↓
+
+## How does the *AI Optimization Type* and *Distance Scaling* work?
+> [!NOTE]
+> This overview is a simplified explanation.
+> This mod makes use of additional smaller systems, but **AI Optimization Type** and **Distance Scaling** are the two main systems that dictate how the mod behaves.
+
+> [!NOTE]
+> The percentages and radiuses shown in this explanation are for visual reference and do not reflect the actual numbers.
+
+The following image will be used as a base for the visual references:
+
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/explanationImages/radius_explaination_basic.png?raw=true" alt="" width="575"/>
+
+### *AI Optimization Type*
+This setting controls how aggressive mob AI ticks are reduced across each zone. The percentages represent how much of the original vanilla AI activity remains:
+
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/explanationImages/radius_explaination_opti_type_minimal.png?raw=true" alt="" width="575"/>
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/explanationImages/radius_explaination_opti_type_moderate.png?raw=true" alt="" width="575"/>
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/explanationImages/radius_explaination_opti_type_aggressive.png?raw=true" alt="" width="575"/>
+
+### *Distance Scaling*
+This setting controls where the range zone boundaries are positioned relative to your simulation distance and player location.
+
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/explanationImages/radius_explaination_close_range.png?raw=true" alt="" width="575"/>
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/explanationImages/radius_explaination_medium_range.png?raw=true" alt="" width="575"/>
+<img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/explanationImages/radius_explaination_far_range.png?raw=true" alt="" width="575"/>
