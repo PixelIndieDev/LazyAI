@@ -19,12 +19,6 @@
     "main": [
       "com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev"
     ],
-    "client": [
-      "com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev_client"
-    ],
-    "server": [
-      "com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev_server"
-    ],
     "modmenu": [
       "com.pixelindiedev.lazy_ai_pixelindiedev.config.integration.ModMenuIntegration"
     ]

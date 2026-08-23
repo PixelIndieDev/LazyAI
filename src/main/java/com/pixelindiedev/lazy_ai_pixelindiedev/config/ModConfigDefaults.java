@@ -6,6 +6,10 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.config;
 // Licensed under the GNU GENERAL PUBLIC LICENSE
 // See the LICENSE file in the project root for full license information.
 
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceScalingType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.TemptDelayEnum;
+
 public class ModConfigDefaults {
     public static final DistanceScalingType Defaults_DistanceScaling = DistanceScalingType.Medium;
     public static final OptimalizationType Defaults_AIOptimizationType = OptimalizationType.Dynamic;

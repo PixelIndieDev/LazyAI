@@ -7,6 +7,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.LookControl;
 import org.spongepowered.asm.mixin.Final;
@@ -25,17 +26,19 @@ public class LookControlMixin {
     private final static int[] cooldownsAgressive = {1, 7, 25};
     @Unique
     private final static int[] cooldownsMinimal = {1, 2, 6};
-
     @Final
     @Shadow
     protected Mob mob;
-
+    @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
     @Unique
     private int offset;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void captureMob(Mob mob, CallbackInfo ci) {
-        offset = mob.getId();
+        offset = mob.getUUID().hashCode() & Integer.MAX_VALUE;
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
@@ -46,10 +49,15 @@ public class LookControlMixin {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }

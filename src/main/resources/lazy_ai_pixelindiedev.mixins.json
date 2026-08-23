@@ -7,6 +7,7 @@
     "LookControlMixin",
     "MobPushingMixin",
     "MoveItemsTaskMixin",
+    "PlayerListMixin",
     "WorldMixin",
     "entity.AnimalEntityMixin",
     "entity.LivingEntityMixin",

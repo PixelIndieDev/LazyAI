@@ -7,7 +7,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.universal;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
@@ -27,6 +28,12 @@ public class UniversalAngerGoalmixin<T extends Mob & NeutralMob> {
     private final static int[] cooldownsAgressive = {15, 30, 60};
     @Unique
     private final static int[] cooldownsMinimal = {5, 15, 40};
+
+    @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
+
     @Unique
     private int cooldown = 0;
     @Unique
@@ -53,10 +60,15 @@ public class UniversalAngerGoalmixin<T extends Mob & NeutralMob> {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }

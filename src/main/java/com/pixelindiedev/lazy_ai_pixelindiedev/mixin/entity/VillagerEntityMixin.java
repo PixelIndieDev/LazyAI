@@ -7,6 +7,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.entity;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.VillagerCacheAccessor;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.VillagerEntityAccessor;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
@@ -32,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.hasSolidCollision;
-import static com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev.getOptimalizationType;
 
 @Mixin(Villager.class)
 public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
@@ -63,15 +63,20 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private ResourceKey<VillagerProfession> cachedProfessionKey;
 
+    @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
+
     @Shadow
     protected abstract void stopTrading();
 
     @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/Holder;)V", at = @At("RETURN"))
-    private void captureMob(EntityType entityType, Level world, Holder type, CallbackInfo ci) {
+    private void captureMob(EntityType entityType, Level level, Holder type, CallbackInfo ci) {
         villager = (Villager) (Object) this;
         isInTradingHall = false;
         shouldRefreshTradingHall = false;
-        randomSelectedTick = villager.getId();
+        randomSelectedTick = villager.getUUID().hashCode() & Integer.MAX_VALUE;
         cachedProfessionEntry = null;
         cachedProfessionKey = null;
         reusableSide = new BlockPos.MutableBlockPos();
@@ -196,10 +201,15 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }

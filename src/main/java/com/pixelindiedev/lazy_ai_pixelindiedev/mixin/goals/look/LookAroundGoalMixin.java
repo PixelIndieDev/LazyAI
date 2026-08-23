@@ -7,7 +7,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.look;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import org.spongepowered.asm.mixin.Final;
@@ -26,6 +27,12 @@ public class LookAroundGoalMixin {
     private final static int[] cooldownsAgressive = {5, 15, 50};
     @Unique
     private final static int[] cooldownsMinimal = {1, 5, 15};
+
+    @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
+
     @Shadow
     @Final
     private Mob mob;
@@ -52,10 +59,15 @@ public class LookAroundGoalMixin {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }

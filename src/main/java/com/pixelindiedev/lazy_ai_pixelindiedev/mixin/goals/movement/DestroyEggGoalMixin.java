@@ -7,7 +7,8 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
 import org.spongepowered.asm.mixin.Final;
@@ -26,6 +27,10 @@ public class DestroyEggGoalMixin {
     private final static int[] cooldownsAgressive = {60, 150, 300};
     @Unique
     private final static int[] cooldownsMinimal = {5, 15, 50};
+    @Unique
+    private OptimalizationType cachedOptiType;
+    @Unique
+    private int[] cachedCooldownList;
     @Unique
     private int cooldown = 0;
     @Unique
@@ -57,10 +62,15 @@ public class DestroyEggGoalMixin {
 
     @Unique
     private int[] getCooldownList() {
-        return switch (Lazy_ai_pixelindiedev.getOptimalizationType()) {
-            case Minimal -> cooldownsMinimal;
-            case Agressive -> cooldownsAgressive;
-            case null, default -> cooldowns;
-        };
+        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
+        if (current != cachedOptiType) {
+            cachedOptiType = current;
+            cachedCooldownList = switch (current) {
+                case Minimal -> cooldownsMinimal;
+                case Agressive -> cooldownsAgressive;
+                case null, default -> cooldowns;
+            };
+        }
+        return cachedCooldownList;
     }
 }
