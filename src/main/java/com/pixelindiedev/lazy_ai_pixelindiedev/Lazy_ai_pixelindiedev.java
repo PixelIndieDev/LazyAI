@@ -15,8 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.initializeCacheAsync;
-
 public class Lazy_ai_pixelindiedev implements ModInitializer {
 
     // LazyAI
@@ -175,7 +173,5 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         ServerTickEvents.START_SERVER_TICK.register(Lazy_ai_pixelindiedev::onServerTick);
         CONFIG = ModConfig.load();
         UpdateDistanceValues();
-
-        initializeCacheAsync();
     }
 }
