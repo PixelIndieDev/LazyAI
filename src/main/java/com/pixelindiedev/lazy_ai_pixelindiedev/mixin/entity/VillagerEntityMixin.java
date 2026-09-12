@@ -10,7 +10,7 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.VillagerCacheAccessor;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.VillagerEntityAccessor;
-import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -43,7 +43,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private final static int[] cooldownsMinimal = {30, 70, 110};
     @Unique
-    private final Long2BooleanOpenHashMap cachedBlockPos = new Long2BooleanOpenHashMap(9);
+    private final Long2ObjectOpenHashMap<Boolean> cachedBlockPos = new Long2ObjectOpenHashMap<>(9);
     @Unique
     private final Direction[] directionsDirections = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
     @Unique
@@ -82,11 +82,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
     @Override
     public void lazyai$invalidateBlockCache(BlockPos pos) {
-        final long key = pos.asLong();
-        if (cachedBlockPos.containsKey(key)) {
-            cachedBlockPos.remove(key);
-            shouldRefreshTradingHall = true;
-        }
+        if (cachedBlockPos.remove(pos.asLong()) != null) shouldRefreshTradingHall = true;
     }
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"), cancellable = true)
@@ -190,13 +186,12 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private boolean getCachedSolidBlock(Level world, BlockPos pos) {
         final long key = pos.asLong();
-        if (cachedBlockPos.containsKey(key)) return cachedBlockPos.get(key);
-        else {
-            final BlockState state = world.getBlockState(pos);
-            final boolean isSolid = hasSolidCollision(state);
-            cachedBlockPos.put(key, isSolid);
-            return isSolid;
-        }
+        final Boolean cached = cachedBlockPos.get(key);
+        if (cached != null) return cached;
+        final BlockState state = world.getBlockState(pos);
+        final Boolean isSolid = hasSolidCollision(state);
+        cachedBlockPos.put(key, isSolid);
+        return isSolid;
     }
 
     @Unique
