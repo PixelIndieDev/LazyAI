@@ -6,17 +6,16 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin;
 // Licensed under the GNU GENERAL PUBLIC LICENSE
 // See the LICENSE file in the project root for full license information.
 
-import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.CriticalTPSModeEnum;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.EntityCategoryEnum;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.CooldownHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,30 +29,21 @@ import static com.pixelindiedev.lazy_ai_pixelindiedev.helpers.ThrottleHelper.Sho
 
 @Mixin(LivingEntity.class)
 public abstract class MobPushingMixin {
+    @Final
     @Unique
-    private final static int[] cooldowns = {5, 10, 15};  // Cooldowns from close to far, in ticks
-    @Unique
-    private final static int[] cooldownsAgressive = {10, 15, 25};
-    @Unique
-    private final static int[] cooldownsMinimal = {2, 6, 10};
-
+    private final CooldownHelper localCooldownHelper = new CooldownHelper(
+            new int[]{5, 10, 15}, // Cooldowns from close to far, in ticks
+            new int[]{10, 15, 25},
+            new int[]{2, 6, 10}
+    );
     @Unique
     private EntityCategoryEnum cachedCategory;
-
-    @Unique
-    private OptimalizationType cachedOptiType;
-    @Unique
-    private int[] cachedCooldownList;
 
     @Unique
     private int waitingForCramming;
 
     @Unique
-    private int cooldown = 0;
-    @Unique
     private Mob mob;
-    @Unique
-    private DistanceType previousDistanceType = DistanceType.FarRange;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void captureMob(EntityType<?> type, Level world, CallbackInfo ci) {
@@ -70,35 +60,10 @@ public abstract class MobPushingMixin {
         }
         waitingForCramming = shouldResult.newWaitingForCramming();
 
-        if (CriticalTPSMode.ordinal() > CriticalTPSModeEnum.Moderate.ordinal()) ci.cancel();
-
-        if (mob != null) {
-            DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(mob);
-
-            final int[] temparray = getCooldownList();
-            if (newDistanceType != previousDistanceType) {
-                cooldown = temparray[newDistanceType.ordinal()] - (temparray[previousDistanceType.ordinal()] - cooldown);
-                previousDistanceType = newDistanceType;
-            }
-
-            if (cooldown > 0) {
-                cooldown--;
-                ci.cancel();
-            } else cooldown = temparray[newDistanceType.ordinal()];
+        if (CriticalTPSMode.ordinal() > CriticalTPSModeEnum.Moderate.ordinal()) {
+            ci.cancel();
+            return;
         }
-    }
-
-    @Unique
-    private int[] getCooldownList() {
-        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
-        if (current != cachedOptiType) {
-            cachedOptiType = current;
-            cachedCooldownList = switch (current) {
-                case Minimal -> cooldownsMinimal;
-                case Agressive -> cooldownsAgressive;
-                case null, default -> cooldowns;
-            };
-        }
-        return cachedCooldownList;
+        if (mob != null && localCooldownHelper.shouldThrottle(mob)) ci.cancel();
     }
 }

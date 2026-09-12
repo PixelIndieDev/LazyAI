@@ -7,8 +7,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.CooldownHelper;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
 import org.spongepowered.asm.mixin.Final;
@@ -21,20 +20,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = RemoveBlockGoal.class, priority = 1001)
 public class DestroyEggGoalMixin {
+    @Final
     @Unique
-    private final static int[] cooldowns = {40, 100, 200};  // Cooldowns from close to far, in ticks
-    @Unique
-    private final static int[] cooldownsAgressive = {60, 150, 300};
-    @Unique
-    private final static int[] cooldownsMinimal = {5, 15, 50};
-    @Unique
-    private OptimalizationType cachedOptiType;
-    @Unique
-    private int[] cachedCooldownList;
-    @Unique
-    private int cooldown = 0;
-    @Unique
-    private DistanceType previousDistanceType = DistanceType.FarRange;
+    private final CooldownHelper localCooldownHelper = new CooldownHelper(
+            new int[]{40, 100, 200}, // Cooldowns from close to far, in ticks
+            new int[]{60, 150, 300},
+            new int[]{5, 15, 50}
+    );
     @Final
     @Shadow
     private Mob removerMob;
@@ -46,31 +38,6 @@ public class DestroyEggGoalMixin {
             return;
         }
 
-        final DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(removerMob);
-
-        final int[] temparray = getCooldownList();
-        if (newDistanceType != previousDistanceType) {
-            cooldown = temparray[newDistanceType.ordinal()] - (temparray[previousDistanceType.ordinal()] - cooldown);
-            previousDistanceType = newDistanceType;
-        }
-
-        if (cooldown > 0) {
-            cooldown--;
-            cir.setReturnValue(false);
-        } else cooldown = temparray[newDistanceType.ordinal()];
-    }
-
-    @Unique
-    private int[] getCooldownList() {
-        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
-        if (current != cachedOptiType) {
-            cachedOptiType = current;
-            cachedCooldownList = switch (current) {
-                case Minimal -> cooldownsMinimal;
-                case Agressive -> cooldownsAgressive;
-                case null, default -> cooldowns;
-            };
-        }
-        return cachedCooldownList;
+        if (localCooldownHelper.shouldThrottle(removerMob)) cir.setReturnValue(false);
     }
 }

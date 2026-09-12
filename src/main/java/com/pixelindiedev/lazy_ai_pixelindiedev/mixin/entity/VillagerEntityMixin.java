@@ -7,7 +7,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.entity;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.CooldownHelper;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.VillagerCacheAccessor;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.VillagerEntityAccessor;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -25,6 +25,7 @@ import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -36,12 +37,13 @@ import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.hasSol
 
 @Mixin(Villager.class)
 public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
+    @Final
     @Unique
-    private final static int[] cooldowns = {50, 90, 150};  // Cooldowns from close to far, in ticks
-    @Unique
-    private final static int[] cooldownsAgressive = {70, 115, 250};
-    @Unique
-    private final static int[] cooldownsMinimal = {30, 70, 110};
+    private final CooldownHelper localCooldownHelper = new CooldownHelper(
+            new int[]{50, 90, 150}, // Cooldowns from close to far, in ticks
+            new int[]{70, 115, 250},
+            new int[]{30, 70, 110}
+    );
     @Unique
     private final Long2ObjectOpenHashMap<Boolean> cachedBlockPos = new Long2ObjectOpenHashMap<>(9);
     @Unique
@@ -62,11 +64,6 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     private Holder<VillagerProfession> cachedProfessionEntry;
     @Unique
     private ResourceKey<VillagerProfession> cachedProfessionKey;
-
-    @Unique
-    private OptimalizationType cachedOptiType;
-    @Unique
-    private int[] cachedCooldownList;
 
     @Shadow
     protected abstract void stopTrading();
@@ -125,7 +122,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
     @Unique
     private boolean isInTradingCell(Villager villager) {
-        final int[] cooldownList = getCooldownList();
+        final int[] cooldownList = localCooldownHelper.getCurrentCooldownList();
         final int distanceOrdinal = Lazy_ai_pixelindiedev.getDistance(villager).ordinal();
 
         if ((villager.tickCount + randomSelectedTick) % cooldownList[distanceOrdinal] != 0) return isInTradingHall;
@@ -192,19 +189,5 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
         final Boolean isSolid = hasSolidCollision(state);
         cachedBlockPos.put(key, isSolid);
         return isSolid;
-    }
-
-    @Unique
-    private int[] getCooldownList() {
-        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
-        if (current != cachedOptiType) {
-            cachedOptiType = current;
-            cachedCooldownList = switch (current) {
-                case Minimal -> cooldownsMinimal;
-                case Agressive -> cooldownsAgressive;
-                case null, default -> cooldowns;
-            };
-        }
-        return cachedCooldownList;
     }
 }
