@@ -47,7 +47,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private final Direction[] directionsDirections = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
     @Unique
-    private BlockPos.MutableBlockPos reusableSide = new BlockPos.MutableBlockPos();
+    private final BlockPos.MutableBlockPos reusableSide = new BlockPos.MutableBlockPos();
     @Unique
     private Villager villager;
     @Unique
@@ -55,7 +55,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private boolean shouldRefreshTradingHall;
     @Unique
-    private BlockPos lastStandingLocation;
+    private BlockPos lastStandingLocation = BlockPos.ZERO;
     @Unique
     private int randomSelectedTick = -1;
     @Unique
@@ -78,7 +78,6 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
         shouldRefreshTradingHall = false;
         cachedProfessionEntry = null;
         cachedProfessionKey = null;
-        reusableSide = new BlockPos.MutableBlockPos();
     }
 
     @Override
@@ -137,8 +136,8 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
         final BlockPos center = villager.blockPosition();
         //if block was changed near, or villager is no longer standing in the same spot
-        if (shouldRefreshTradingHall || lastStandingLocation != center) {
-            if (lastStandingLocation != center) cachedBlockPos.clear();
+        if (shouldRefreshTradingHall || !lastStandingLocation.equals(center)) {
+            if (!lastStandingLocation.equals(center)) cachedBlockPos.clear();
             shouldRefreshTradingHall = false;
             lastStandingLocation = center;
 
