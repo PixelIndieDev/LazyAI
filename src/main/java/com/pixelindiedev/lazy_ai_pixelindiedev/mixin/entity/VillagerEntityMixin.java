@@ -99,7 +99,10 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
         final ResourceKey<VillagerProfession> villagerprof = getCachedProfession();
         if (villagerprof == VillagerProfession.NONE || villagerprof == VillagerProfession.NITWIT) return;
 
-        if (villager.isTrading()) return;
+        if (villager.isTrading()) {
+            if (villager.getVillagerData().profession().is(VillagerProfession.NONE)) stopTrading();
+            return;
+        }
 
         if (((villager.tickCount + randomSelectedTick) & 31) != 0) {
             final VillagerEntityAccessor accessor = (VillagerEntityAccessor) villager;
@@ -121,9 +124,6 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
                 accessor.setLastCustomer(null);
             }
 
-            if (villager.getVillagerData().profession().is(VillagerProfession.NONE) && villager.isTrading())
-                stopTrading();
-
             ci.cancel();
         }
     }
@@ -138,6 +138,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
         final BlockPos center = villager.blockPosition();
         //if block was changed near, or villager is no longer standing in the same spot
         if (shouldRefreshTradingHall || lastStandingLocation != center) {
+            if (lastStandingLocation != center) cachedBlockPos.clear();
             shouldRefreshTradingHall = false;
             lastStandingLocation = center;
 
