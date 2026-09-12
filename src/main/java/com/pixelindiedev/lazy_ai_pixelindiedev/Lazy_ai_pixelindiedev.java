@@ -1,6 +1,6 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev;
 
-import com.pixelindiedev.lazy_ai_pixelindiedev.config.*;
+import com.pixelindiedev.lazy_ai_pixelindiedev.config.ModConfig;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.CriticalTPSModeEnum;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
@@ -13,7 +13,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.initializeCacheAsync;
@@ -33,9 +32,10 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     // Thank you. :)
     // -----------------------------
 
-    private static final Map<UUID, DistanceType> cache = new ConcurrentHashMap<>();
+    private static final Map<Integer, DistanceType> cache = new ConcurrentHashMap<>();
     private static final CriticalTPSModeEnum[] CriticalEnumValues = CriticalTPSModeEnum.values();
     private static final double[] MSPerCriticalMode;
+    private static final int CacheCacheForTicksAmount = 5;
     public static ModConfig CONFIG;
     public static CriticalTPSModeEnum CriticalTPSMode = CriticalTPSModeEnum.Normal;
     private static double Server_TPS_MS = 50.0f; //in ms
@@ -88,7 +88,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         else if (CONFIG.AIOptimizationType == OptimalizationType.Moderate) CriticalTPSMode = CriticalTPSModeEnum.Low;
         else CriticalTPSMode = CriticalTPSModeEnum.Normal;
 
-        if (currentTick != lastTick) {
+        if (currentTick - lastTick >= CacheCacheForTicksAmount) {
             cache.clear();
             lastTick = currentTick;
         }
@@ -125,9 +125,9 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     }
 
     public static DistanceType getDistance(LivingEntity mob) {
-        if (mob == null || mob.level() == null) return DistanceType.FarRange;
+        if (mob == null) return DistanceType.FarRange;
 
-        return cache.computeIfAbsent(mob.getUUID(), id -> GetClosestPlayerDistance(mob));
+        return cache.computeIfAbsent(mob.getId(), id -> GetClosestPlayerDistance(mob));
     }
 
     public static int chunksToSquaredBlocks(int chunkRadius, int multiplier) {

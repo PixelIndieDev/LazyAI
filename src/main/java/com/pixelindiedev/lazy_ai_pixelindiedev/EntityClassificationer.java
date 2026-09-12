@@ -7,8 +7,8 @@ import net.minecraft.world.entity.EntityTypeIds;
 
 public class EntityClassificationer {
     public static EntityCategoryEnum GetEntityCategory(ResourceKey<EntityType<?>> type) {
-        if (EntityClassificationer.CanBePet(type))  return EntityCategoryEnum.Pet;
-        else if (EntityClassificationer.IsEntityFarmAnimal(type))  return EntityCategoryEnum.Farm;
+        if (EntityClassificationer.CanBePet(type)) return EntityCategoryEnum.Pet;
+        else if (EntityClassificationer.IsEntityFarmAnimal(type)) return EntityCategoryEnum.Farm;
         else if (EntityClassificationer.IsAmbientAnimal(type)) return EntityCategoryEnum.Ambient;
         else return EntityCategoryEnum.Other;
     }
