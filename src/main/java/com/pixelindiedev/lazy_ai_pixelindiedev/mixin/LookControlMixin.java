@@ -34,15 +34,11 @@ public class LookControlMixin {
     @Unique
     private int[] cachedCooldownList;
     @Unique
-    private int offset;
-
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void captureMob(Mob mob, CallbackInfo ci) {
-        offset = mob.getUUID().hashCode() & Integer.MAX_VALUE;
-    }
+    private int offset = -1;
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTick(CallbackInfo ci) {
+        if (offset == -1) offset = mob.getId();
         if ((mob.tickCount + offset) % getCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
             ci.cancel();
     }

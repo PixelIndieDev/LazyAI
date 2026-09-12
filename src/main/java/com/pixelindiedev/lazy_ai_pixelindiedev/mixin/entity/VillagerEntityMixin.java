@@ -57,7 +57,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private BlockPos lastStandingLocation;
     @Unique
-    private int randomSelectedTick;
+    private int randomSelectedTick = -1;
     @Unique
     private Holder<VillagerProfession> cachedProfessionEntry;
     @Unique
@@ -76,7 +76,6 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
         villager = (Villager) (Object) this;
         isInTradingHall = false;
         shouldRefreshTradingHall = false;
-        randomSelectedTick = villager.getUUID().hashCode() & Integer.MAX_VALUE;
         cachedProfessionEntry = null;
         cachedProfessionKey = null;
         reusableSide = new BlockPos.MutableBlockPos();
@@ -93,6 +92,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"), cancellable = true)
     private void skipIdleTradingHallTick(ServerLevel world, CallbackInfo ci) {
+        if (randomSelectedTick == -1) randomSelectedTick = villager.getId();
         if (villager == null || !villager.isAlive() || villager.isBaby() || villager.isPanicking()) return;
         if (!isInTradingCell(villager)) return;
 

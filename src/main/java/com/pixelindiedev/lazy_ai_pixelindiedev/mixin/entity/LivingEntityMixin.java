@@ -68,7 +68,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Unique
     private LivingEntity mob;
     @Unique
-    private int aiTickOffset;
+    private int aiTickOffset = -1;
     @Unique
     private int tickCounter;
     @Unique
@@ -119,13 +119,13 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     private void assignOffset(EntityType<?> type, Level world, CallbackInfo ci) {
         this.mob = this.asLivingEntity();
         cachedCategory = GetEntityCategory(BuiltInRegistries.ENTITY_TYPE.getResourceKey(type).orElseThrow());
-        this.aiTickOffset = (mob.getUUID().hashCode() & Integer.MAX_VALUE) % getCooldownList()[2];
-        waitingForCramming = aiTickOffset;
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void ThrottleWholeAI(CallbackInfo ci) {
         if (mob == null) return;
+        if (aiTickOffset == -1) aiTickOffset = mob.getId();
+        waitingForCramming = aiTickOffset;
         if (mob.isAlwaysTicking()) return;
         if (Lazy_ai_pixelindiedev.getEnableVanillaMobTicking()) return;
 
