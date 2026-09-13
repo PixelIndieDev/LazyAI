@@ -17,7 +17,7 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 - **[Curseforge](https://www.curseforge.com/minecraft/mc-mods/lazyai)**
 
 ## Performance difference
-_Lower ms -> better_
+_Lower ms -> better (target: 50ms or lower per tick)_
 ### Vanilla performance
 <img src="https://github.com/PixelIndieDev/LazyAI/blob/main/documentation/previewImages/MC_performance_Vanilla.png?raw=true" alt="Vanilla performance" width="500"/>
 
@@ -56,6 +56,9 @@ Yes, this mod can improve your TPS.
 
 ### Can this mod increase my FPS?
 No, this mod cannot improve your FPS.
+
+### Why does the dynamic optimization mode not target below 50ms?
+Minecraft runs on a 50ms tick cycle (20 TPS). If the (local) server processing finishes in under 50ms, the game waits for the remaining time. Consequently, any optimization below 50ms yields no increase in normal tick speed. The mod focuses on keeping tick times from exceeding 50ms, as higher values cause entities to move in slow motion. The heavier the (local) server load, the more aggressively the dynamic mode intervenes to maintain 50ms. When the (local) server runs smoothly, the mod scales back its intervention.
 
 ### Does this mod affect mob farms?
 Short awnser: Yes, but only a little bit.
