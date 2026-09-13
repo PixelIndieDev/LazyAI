@@ -13,8 +13,10 @@ public class BlockDistancesHelper {
     private static int SimulationDistance = 0; // value is in chunks
 
     public static void SetSimulationDistance(int newDistance) {
-        if (SimulationDistance != newDistance) SimulationDistance = newDistance;
-        Lazy_ai_pixelindiedev.UpdateDistanceValues();
+        if (SimulationDistance != newDistance) {
+            SimulationDistance = newDistance;
+            Lazy_ai_pixelindiedev.UpdateDistanceValues();
+        }
     }
 
     public static void SetBlockDistances(int closeScaling, int farScaling) {

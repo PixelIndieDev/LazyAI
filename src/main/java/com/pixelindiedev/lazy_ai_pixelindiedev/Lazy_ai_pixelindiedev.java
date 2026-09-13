@@ -30,20 +30,27 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     // Thank you. :)
     // -----------------------------
 
+    public static final float Server_TPS_NoNeed_Multiplier = 0.75f;
     private static final Map<Integer, DistanceType> cache = new ConcurrentHashMap<>();
     private static final CriticalTPSModeEnum[] CriticalEnumValues = CriticalTPSModeEnum.values();
     private static final double[] MSPerCriticalMode;
     private static final int CacheCacheForTicksAmount = 5;
+    private static final float Server_TPS_NoNeed_MS = 50.5f; //in ms
+    private static final float Server_TPS_NoNeed_Threshold_MS = Server_TPS_NoNeed_MS * Server_TPS_NoNeed_Multiplier;
+    private static final float Server_TPS_Threshold_MS_Minimal = 50.51f;
+    private static final float Server_TPS_Threshold_MS_Moderate = 62.5f;
+    private static final float TPSHeadRoomValue = 2.1f;
     public static ModConfig CONFIG;
     public static CriticalTPSModeEnum CriticalTPSMode = CriticalTPSModeEnum.Normal;
-    private static double Server_TPS_MS = 50.0f; //in ms
+    public static boolean UserHasNoNeed = false;
+    private static float Server_TPS_MS = 50.0f; //in ms
     private static int lastTick = -1;
     private static int checkTickDelay = 0;
 
     static {
         MSPerCriticalMode = new double[CriticalEnumValues.length];
 
-        final float stepsize = 1.1f;
+        final float stepsize = 0.2f;
         float ticks = 20.0f;
         for (CriticalTPSModeEnum mode : CriticalEnumValues) {
             MSPerCriticalMode[mode.ordinal()] = tpsToMs(ticks);
@@ -78,13 +85,19 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
                     MSPerTick = 58.8; //Make it use the default setting temporarily before it has the valid tick times
                 else MSPerTick = (sum / tickTimesLength) * 1.0e-6;
 
-                Server_TPS_MS = MSPerTick;
-                CriticalTPSMode = GetCurrentCriticalMode(Server_TPS_MS);
+                Server_TPS_MS = (float) MSPerTick;
+                UserHasNoNeed = UserHasNoNeed ? Server_TPS_MS <= Server_TPS_NoNeed_MS : Server_TPS_MS <= Server_TPS_NoNeed_Threshold_MS;
+                if (!UserHasNoNeed) CriticalTPSMode = GetCurrentCriticalMode(Server_TPS_MS);
+                else CriticalTPSMode = CriticalTPSModeEnum.Normal;
             }
-        } else if (CONFIG.AIOptimizationType == OptimalizationType.Agressive)
-            CriticalTPSMode = CriticalTPSModeEnum.Moderate;
-        else if (CONFIG.AIOptimizationType == OptimalizationType.Moderate) CriticalTPSMode = CriticalTPSModeEnum.Low;
-        else CriticalTPSMode = CriticalTPSModeEnum.Normal;
+        } else {
+            UserHasNoNeed = false;
+            if (CONFIG.AIOptimizationType == OptimalizationType.Agressive)
+                CriticalTPSMode = CriticalTPSModeEnum.Severe;
+            else if (CONFIG.AIOptimizationType == OptimalizationType.Moderate)
+                CriticalTPSMode = CriticalTPSModeEnum.Moderate;
+            else CriticalTPSMode = CriticalTPSModeEnum.Normal;
+        }
 
         if (currentTick - lastTick >= CacheCacheForTicksAmount) {
             cache.clear();
@@ -124,8 +137,12 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
 
     public static DistanceType getDistance(LivingEntity mob) {
         if (mob == null) return DistanceType.FarRange;
-
-        return cache.computeIfAbsent(mob.getId(), id -> GetClosestPlayerDistance(mob));
+        final int id = mob.getId();
+        final DistanceType cached = cache.get(id);
+        if (cached != null) return cached;
+        final DistanceType computed = GetClosestPlayerDistance(mob);
+        cache.put(id, computed);
+        return computed;
     }
 
     public static int chunksToSquaredBlocks(int chunkRadius, int multiplier) {
@@ -139,8 +156,8 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
 
     public static OptimalizationType getOptimalizationType() {
         if (CONFIG.AIOptimizationType == OptimalizationType.Dynamic) {
-            if (Server_TPS_MS <= 50.51f) return OptimalizationType.Minimal;
-            else if (Server_TPS_MS <= 62.5f) return OptimalizationType.Moderate;
+            if (DoesTPSHaveHeadroomFor(Server_TPS_Threshold_MS_Minimal)) return OptimalizationType.Minimal;
+            else if (DoesTPSHaveHeadroomFor(Server_TPS_Threshold_MS_Moderate)) return OptimalizationType.Moderate;
             else return OptimalizationType.Agressive;
         } else return CONFIG.AIOptimizationType;
     }
@@ -158,14 +175,16 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     }
 
     public static Mob GetMobEntity(LivingEntity entity) {
-        if (entity != null) {
-            if (entity instanceof Mob mob) return mob;
-            else return null;
-        } else return null;
+        return entity instanceof Mob mob ? mob : null;
     }
 
     public static void UpdateDistanceValues() {
         BlockDistancesHelper.SetBlockDistances(CONFIG.getBlockDistance_Close_Multiplier(), CONFIG.getBlockDistance_Far_Multiplier());
+    }
+
+    private static boolean DoesTPSHaveHeadroomFor(float threshold) {
+        final float diff = Server_TPS_MS - threshold;
+        return diff <= -TPSHeadRoomValue;
     }
 
     @Override

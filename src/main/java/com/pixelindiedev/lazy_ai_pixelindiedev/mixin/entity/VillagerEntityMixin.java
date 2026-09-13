@@ -42,7 +42,8 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     private final CooldownHelper localCooldownHelper = new CooldownHelper(
             new int[]{50, 90, 150}, // Cooldowns from close to far, in ticks
             new int[]{70, 115, 250},
-            new int[]{30, 70, 110}
+            new int[]{30, 70, 110},
+            true
     );
     @Unique
     private final Long2ObjectOpenHashMap<Boolean> cachedBlockPos = new Long2ObjectOpenHashMap<>(9);
