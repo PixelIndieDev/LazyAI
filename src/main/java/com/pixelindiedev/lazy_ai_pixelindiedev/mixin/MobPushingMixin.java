@@ -48,7 +48,7 @@ public abstract class MobPushingMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void captureMob(EntityType<?> type, Level world, CallbackInfo ci) {
         this.mob = GetMobEntity((LivingEntity) (Object) this);
-        cachedCategory = GetEntityCategory(BuiltInRegistries.ENTITY_TYPE.getResourceKey(type).orElseThrow());
+        cachedCategory = GetEntityCategory(type);
         waitingForCramming = 0;
     }
 

@@ -115,7 +115,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void assignOffset(EntityType<?> type, Level world, CallbackInfo ci) {
         this.mob = this.asLivingEntity();
-        cachedCategory = GetEntityCategory(BuiltInRegistries.ENTITY_TYPE.getResourceKey(type).orElseThrow());
+        cachedCategory = GetEntityCategory(type);
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
