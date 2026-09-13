@@ -6,7 +6,6 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.enums.CriticalTPSModeEnum;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.BlockDistancesHelper;
-import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.LoggerHolder;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
@@ -113,8 +112,6 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         if (currentTick - lastTick >= CacheCacheForTicksAmount) {
             cache.clear();
             lastTick = currentTick;
-            LoggerHolder.MODLOGGER.info("Cached type - " + CachedDynamicOptimalizationType);
-            LoggerHolder.MODLOGGER.info("OptimalizationType.Moderate - " + EstimatedEasingMarginFor(OptimalizationType.Moderate));
         }
 
         if (checkTickDelay > 99) {
