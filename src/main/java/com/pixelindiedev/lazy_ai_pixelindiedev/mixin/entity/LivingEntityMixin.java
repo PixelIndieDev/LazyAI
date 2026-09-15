@@ -192,7 +192,8 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
             } else mob.clearFire();
 
             if (mob.hurtTime > 0) --mob.hurtTime;
-            if (mob.invulnerableTime > 0 && !(mob instanceof ServerPlayer)) --mob.invulnerableTime;
+            final int vulTime = mob.getInvulnerableTime();
+            if (vulTime > 0 && !(mob instanceof ServerPlayer)) mob.setInvulnerableTime(vulTime - 1);
             if (lastHurtByPlayerMemoryTime > 0) --lastHurtByPlayerMemoryTime;
             else lastHurtByPlayer = null;
 

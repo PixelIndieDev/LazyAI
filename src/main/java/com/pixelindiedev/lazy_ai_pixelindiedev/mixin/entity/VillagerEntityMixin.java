@@ -16,10 +16,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.village.ReputationEventType;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.hasSolidCollision;
 
 @Mixin(Villager.class)
-public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
+public abstract class VillagerEntityMixin extends AbstractVillager implements VillagerCacheAccessor {
     @Final
     @Unique
     private final CooldownHelper localCooldownHelper = new CooldownHelper(
@@ -66,8 +64,9 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private ResourceKey<VillagerProfession> cachedProfessionKey;
 
-    @Shadow
-    protected abstract void stopTrading();
+    public VillagerEntityMixin(EntityType<? extends AbstractVillager> type, Level level) {
+        super(type, level);
+    }
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void captureMob(EntityType entityType, Level level, CallbackInfo ci) {
@@ -99,16 +98,6 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
         if (((villager.tickCount + randomSelectedTick) & 31) != 0) {
             final VillagerEntityAccessor accessor = (VillagerEntityAccessor) villager;
-
-            final int tempInt = accessor.getLevelUpTimer();
-            if (!villager.isTrading() && tempInt > 0) {
-                accessor.setLevelUpTimer(tempInt - 1);
-
-                if (accessor.getLevelUpTimer() <= 0) {
-                    if (accessor.isLevelingUp()) accessor.invokeLevelUp(world);
-                    villager.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-                }
-            }
 
             final Player lastcust = accessor.getLastCustomer();
             if (lastcust != null) {
