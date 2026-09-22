@@ -23,6 +23,8 @@ public class CooldownHelper {
     private int cooldown = 0;
     private DistanceType previousDistanceType = DistanceType.FarRange;
 
+    private int nextAllowedTick = Integer.MIN_VALUE;
+
     public CooldownHelper(int[] cooldowns, int[] cooldownsAgressive, int[] cooldownsMinimal) {
         this(cooldowns, cooldownsAgressive, cooldownsMinimal, false);
     }
@@ -63,6 +65,25 @@ public class CooldownHelper {
 
         cooldown = cooldownList[newDistanceType.ordinal()];
         return false;
+    }
+
+    public boolean canTick(int tickCount, int entityId) {
+        return canTick(tickCount, entityId, (byte) 2);
+    }
+
+    // entityid gets used for the offset
+    public boolean canTick(int tickCount, int entityId, byte elementNumber) {
+        final int[] cooldownList = getCooldownList();
+        final int period = cooldownList[elementNumber];
+
+        if (nextAllowedTick == Integer.MIN_VALUE) {
+            final int rem = (tickCount + entityId) % period;
+            nextAllowedTick = tickCount + (rem == 0 ? 0 : period - rem);
+        }
+
+        if (tickCount < nextAllowedTick) return false;
+        nextAllowedTick = tickCount + period;
+        return true;
     }
 
     public int[] getCurrentCooldownList() {

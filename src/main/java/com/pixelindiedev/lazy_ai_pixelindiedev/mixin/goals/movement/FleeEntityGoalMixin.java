@@ -38,8 +38,6 @@ public class FleeEntityGoalMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void reduceTickFrequency(CallbackInfo ci) {
-        int[] temparray = localCooldownHelper.getCurrentCooldownList();
-        if (temparray == null || temparray[2] == 0) return;
-        if ((mob.tickCount + mob.getId()) % temparray[2] != 0) ci.cancel();
+        if (!localCooldownHelper.canTick(mob.tickCount, mob.getId())) ci.cancel();
     }
 }
