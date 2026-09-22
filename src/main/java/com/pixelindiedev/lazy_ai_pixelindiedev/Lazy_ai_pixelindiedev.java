@@ -34,11 +34,11 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     // -----------------------------
 
     public static final float Server_TPS_NoNeed_Multiplier = 0.75f;
-    public static final int DynamicMode_MinTickCycles = 2; // how many tick cycles should elapse before switching to the new optimization mode
+    public static final byte DynamicMode_MinTickCycles = 2; // how many tick cycles should elapse before switching to the new optimization mode
     private static final Map<Integer, DistanceType> cache = new ConcurrentHashMap<>();
     private static final CriticalTPSModeEnum[] CriticalEnumValues = CriticalTPSModeEnum.values();
     private static final float[] MSPerCriticalMode;
-    private static final int CacheCacheForTicksAmount = 5;
+    private static final byte CacheCacheForTicksAmount = 5;
     private static final float Server_TPS_NoNeed_MS = 50.5f; //in ms
     private static final float Server_TPS_NoNeed_Threshold_MS = Server_TPS_NoNeed_MS * Server_TPS_NoNeed_Multiplier;
     private static final float Server_TPS_Threshold_MS_Minimal = 50.51f;
@@ -56,6 +56,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     private static float Server_TPS_MS = 50.0f; //in ms
     private static float SmoothedServerTPSMS = Server_TPS_MS;
     private static OptimalizationType CachedDynamicOptimalizationType = OptimalizationType.Moderate;
+    private static int lastTickCompleted = -1;
     private static int lastTick = -1;
     private static int checkTickDelay = 0;
 
@@ -109,10 +110,11 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
             else CriticalTPSMode = CriticalTPSModeEnum.Normal;
         }
 
-        if (currentTick - lastTick >= CacheCacheForTicksAmount) {
+        if (currentTick - lastTickCompleted >= CacheCacheForTicksAmount) {
             cache.clear();
-            lastTick = currentTick;
+            lastTickCompleted = currentTick;
         }
+        lastTick = currentTick;
 
         if (checkTickDelay > 99) {
             checkTickDelay = 0;
