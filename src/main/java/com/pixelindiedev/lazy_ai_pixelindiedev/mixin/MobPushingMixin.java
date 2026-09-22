@@ -55,9 +55,7 @@ public abstract class MobPushingMixin {
     @Inject(method = "push(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
     private void ThrottlePush(Entity other, CallbackInfo ci) {
         var shouldResult = ShouldThrottlePushing(cachedCategory, mob, waitingForCramming, 0);
-        if (shouldResult.shouldThrottle()) {
-            ci.cancel();
-        }
+        if (shouldResult.shouldThrottle()) ci.cancel();
         waitingForCramming = shouldResult.newWaitingForCramming();
 
         if (CriticalTPSMode.ordinal() > CriticalTPSModeEnum.Moderate.ordinal()) {

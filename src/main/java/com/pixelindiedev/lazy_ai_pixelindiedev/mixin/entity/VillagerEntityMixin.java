@@ -60,8 +60,6 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private BlockPos lastStandingLocation = BlockPos.ZERO;
     @Unique
-    private int randomSelectedTick = -1;
-    @Unique
     private Holder<VillagerProfession> cachedProfessionEntry;
     @Unique
     private ResourceKey<VillagerProfession> cachedProfessionKey;
@@ -85,7 +83,6 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"), cancellable = true)
     private void skipIdleTradingHallTick(ServerLevel world, CallbackInfo ci) {
-        if (randomSelectedTick == -1) randomSelectedTick = villager.getId();
         if (villager == null || !villager.isAlive() || villager.isBaby() || villager.isPanicking()) return;
         if (!isInTradingCell(villager)) return;
 
@@ -97,7 +94,7 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
             return;
         }
 
-        if (((villager.tickCount + randomSelectedTick) & 31) != 0) {
+        if (((villager.tickCount + villager.getId()) & 31) != 0) {
             final VillagerEntityAccessor accessor = (VillagerEntityAccessor) villager;
 
             final int tempInt = accessor.getLevelUpTimer();
@@ -123,10 +120,9 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
 
     @Unique
     private boolean isInTradingCell(Villager villager) {
-        final int[] cooldownList = localCooldownHelper.getCurrentCooldownList();
-        final int distanceOrdinal = Lazy_ai_pixelindiedev.getDistance(villager).ordinal();
-
-        if ((villager.tickCount + randomSelectedTick) % cooldownList[distanceOrdinal] != 0) return isInTradingHall;
+        final byte distanceOrdinal = (byte) Lazy_ai_pixelindiedev.getDistance(villager).ordinal();
+        if (!localCooldownHelper.canTick(villager.tickCount, villager.getId(), distanceOrdinal))
+            return isInTradingHall;
 
         final BlockPos center = villager.blockPosition();
         //if block was changed near, or villager is no longer standing in the same spot
