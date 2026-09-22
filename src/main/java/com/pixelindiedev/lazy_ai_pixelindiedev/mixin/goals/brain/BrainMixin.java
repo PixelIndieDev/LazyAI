@@ -38,7 +38,7 @@ public class BrainMixin<E extends LivingEntity> {
         final Brain<?> brain = (Brain<?>) (Object) this;
         if (brain.hasMemoryValue(MemoryModuleType.BREED_TARGET)) return;
 
-        if ((world.getGameTime() + mob.getId()) % localCooldownHelper.getCurrentCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
+        if (!localCooldownHelper.canTick(mob.tickCount, mob.getId(), (byte) Lazy_ai_pixelindiedev.getDistance(mob).ordinal()))
             ci.cancel();
     }
 }

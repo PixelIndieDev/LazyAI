@@ -30,13 +30,10 @@ public class LookControlMixin {
     @Final
     @Shadow
     protected Mob mob;
-    @Unique
-    private int offset = -1;
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTick(CallbackInfo ci) {
-        if (offset == -1) offset = mob.getId();
-        if ((mob.tickCount + offset) % localCooldownHelper.getCurrentCooldownList()[Lazy_ai_pixelindiedev.getDistance(mob).ordinal()] != 0)
+        if (!localCooldownHelper.canTick(mob.tickCount, mob.getId(), (byte) Lazy_ai_pixelindiedev.getDistance(mob).ordinal()))
             ci.cancel();
     }
 }

@@ -148,7 +148,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
             return;
         }
 
-        if ((mob.tickCount + aiTickOffset) % interval != 0) {
+        if (!localCooldownHelper.canTick(mob.tickCount, aiTickOffset)) {
             isInThrottle = true;
             ci.cancel();
 

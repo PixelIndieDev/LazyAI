@@ -37,7 +37,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     public static final int DynamicMode_MinTickCycles = 2; // how many tick cycles should elapse before switching to the new optimization mode
     private static final Map<Integer, DistanceType> cache = new ConcurrentHashMap<>();
     private static final CriticalTPSModeEnum[] CriticalEnumValues = CriticalTPSModeEnum.values();
-    private static final double[] MSPerCriticalMode;
+    private static final float[] MSPerCriticalMode;
     private static final int CacheCacheForTicksAmount = 5;
     private static final float Server_TPS_NoNeed_MS = 50.5f; //in ms
     private static final float Server_TPS_NoNeed_Threshold_MS = Server_TPS_NoNeed_MS * Server_TPS_NoNeed_Multiplier;
@@ -60,7 +60,7 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
     private static int checkTickDelay = 0;
 
     static {
-        MSPerCriticalMode = new double[CriticalEnumValues.length];
+        MSPerCriticalMode = new float[CriticalEnumValues.length];
 
         final float stepsize = 0.3f;
         float ticks = 20.0f;
@@ -70,8 +70,8 @@ public class Lazy_ai_pixelindiedev implements ModInitializer {
         }
     }
 
-    private static double tpsToMs(float tps) {
-        return 1000.0 / tps;
+    private static float tpsToMs(float tps) {
+        return 1000.0f / tps;
     }
 
     public static void onServerTick(MinecraftServer server) {
