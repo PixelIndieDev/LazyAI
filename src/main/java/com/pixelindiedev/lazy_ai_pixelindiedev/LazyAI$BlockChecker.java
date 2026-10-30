@@ -25,13 +25,7 @@ public class LazyAI$BlockChecker {
 
     static {
         blockSolidCollisionCheckCache.defaultReturnValue(false);
-    }
-
-    public static void initializeCacheAsync() {
-        new Thread(() -> {
-            initializeCache();
-            System.out.println("LazyAI$BlockCheckerCacheInit started initializing asynchronously");
-        }, "LazyAI$BlockCheckerCacheInit").start();
+        initializeCache();
     }
 
     private static void initializeCache() {
@@ -113,8 +107,6 @@ public class LazyAI$BlockChecker {
     }
 
     private static boolean hasCollisionFast(Block block) {
-        if (blockSolidCollisionCheckCache.containsKey(block)) return blockSolidCollisionCheckCache.getBoolean(block);
-
         //these should have a different boolean value
         //is it a door or trapdoor
         if (block instanceof DoorBlock || block instanceof TrapDoorBlock) {

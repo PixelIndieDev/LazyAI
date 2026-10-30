@@ -4,9 +4,10 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.CriticalTPSModeEnum;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.EntityCategoryEnum;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.CooldownHelper;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.TickCancellingAware;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.EntityAccessor;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -44,12 +46,13 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     // Thank you. :)
     // -----------------------------
 
+    @Final
     @Unique
-    private final static int[] cooldowns = {1, 2, 5};  // Cooldowns from close to far, in ticks
-    @Unique
-    private final static int[] cooldownsAgressive = {1, 3, 10};
-    @Unique
-    private final static int[] cooldownsMinimal = {1, 1, 2};
+    private final CooldownHelper localCooldownHelper = new CooldownHelper(
+            new int[]{1, 2, 5}, // Cooldowns from close to far, in ticks
+            new int[]{1, 3, 10},
+            new int[]{1, 1, 2}
+    );
     @Shadow
     public float yHeadRot;
     @Shadow
@@ -67,7 +70,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Unique
     private LivingEntity mob;
     @Unique
-    private int aiTickOffset;
+    private int aiTickOffset = -1;
     @Unique
     private int tickCounter;
     @Unique
@@ -85,11 +88,6 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
 
     @Unique
     private EntityCategoryEnum cachedCategory;
-
-    @Unique
-    private OptimalizationType cachedOptiType;
-    @Unique
-    private int[] cachedCooldownList;
 
     @Override
     public int lazy_ai$getSkippedTicks() {
@@ -118,17 +116,17 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     private void assignOffset(EntityType<?> type, Level world, CallbackInfo ci) {
         this.mob = this.asLivingEntity();
         cachedCategory = GetEntityCategory(type);
-        this.aiTickOffset = (mob.getUUID().hashCode() & Integer.MAX_VALUE) % getCooldownList()[2];
-        waitingForCramming = aiTickOffset;
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void ThrottleWholeAI(CallbackInfo ci) {
         if (mob == null) return;
+        if (aiTickOffset == -1) aiTickOffset = mob.getId();
+        waitingForCramming = aiTickOffset;
         if (mob.isAlwaysTicking()) return;
         if (Lazy_ai_pixelindiedev.getEnableVanillaMobTicking()) return;
 
-        final int[] theList = getCooldownList();
+        final int[] theList = localCooldownHelper.getCurrentCooldownList();
         final DistanceType distance = Lazy_ai_pixelindiedev.getDistance(mob);
         final int distOrdinal = distance.ordinal();
         final int baseInterval = theList[distOrdinal];
@@ -222,19 +220,5 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
     @Unique
     private boolean isMobInFight(Mob mobEntity) {
         return (mobEntity.getTarget() != null) || mob.hurtTime > 0 || lastHurtByPlayerMemoryTime > 0 || mob.getLastHurtByMob() != null || mob.getLastHurtMob() != null;
-    }
-
-    @Unique
-    private int[] getCooldownList() {
-        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
-        if (current != cachedOptiType) {
-            cachedOptiType = current;
-            cachedCooldownList = switch (current) {
-                case Minimal -> cooldownsMinimal;
-                case Agressive -> cooldownsAgressive;
-                case null, default -> cooldowns;
-            };
-        }
-        return cachedCooldownList;
     }
 }

@@ -1,6 +1,7 @@
 package com.pixelindiedev.lazy_ai_pixelindiedev;
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.enums.EntityCategoryEnum;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 
 public class EntityClassificationer {

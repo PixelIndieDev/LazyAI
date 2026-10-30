@@ -7,10 +7,10 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.entity;
 // See the LICENSE file in the project root for full license information.
 
 import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.CooldownHelper;
 import com.pixelindiedev.lazy_ai_pixelindiedev.interfaces.VillagerCacheAccessor;
 import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.VillagerEntityAccessor;
-import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -25,6 +25,7 @@ import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -36,18 +37,20 @@ import static com.pixelindiedev.lazy_ai_pixelindiedev.LazyAI$BlockChecker.hasSol
 
 @Mixin(Villager.class)
 public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
+    @Final
     @Unique
-    private final static int[] cooldowns = {50, 90, 150};  // Cooldowns from close to far, in ticks
+    private final CooldownHelper localCooldownHelper = new CooldownHelper(
+            new int[]{50, 90, 150}, // Cooldowns from close to far, in ticks
+            new int[]{70, 115, 250},
+            new int[]{30, 70, 110},
+            true
+    );
     @Unique
-    private final static int[] cooldownsAgressive = {70, 115, 250};
-    @Unique
-    private final static int[] cooldownsMinimal = {30, 70, 110};
-    @Unique
-    private final Long2BooleanOpenHashMap cachedBlockPos = new Long2BooleanOpenHashMap(9);
+    private final Long2ObjectOpenHashMap<Boolean> cachedBlockPos = new Long2ObjectOpenHashMap<>(9);
     @Unique
     private final Direction[] directionsDirections = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
     @Unique
-    private BlockPos.MutableBlockPos reusableSide = new BlockPos.MutableBlockPos();
+    private final BlockPos.MutableBlockPos reusableSide = new BlockPos.MutableBlockPos();
     @Unique
     private Villager villager;
     @Unique
@@ -55,51 +58,44 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private boolean shouldRefreshTradingHall;
     @Unique
-    private BlockPos lastStandingLocation;
+    private BlockPos lastStandingLocation = BlockPos.ZERO;
     @Unique
-    private int randomSelectedTick;
+    private int randomSelectedTick = -1;
     @Unique
     private Holder<VillagerProfession> cachedProfessionEntry;
     @Unique
     private ResourceKey<VillagerProfession> cachedProfessionKey;
 
-    @Unique
-    private OptimalizationType cachedOptiType;
-    @Unique
-    private int[] cachedCooldownList;
-
     @Shadow
     protected abstract void stopTrading();
 
-    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/Holder;)V", at = @At("RETURN"))
-    private void captureMob(EntityType entityType, Level level, Holder type, CallbackInfo ci) {
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void captureMob(EntityType entityType, Level level, CallbackInfo ci) {
         villager = (Villager) (Object) this;
         isInTradingHall = false;
         shouldRefreshTradingHall = false;
-        randomSelectedTick = villager.getUUID().hashCode() & Integer.MAX_VALUE;
         cachedProfessionEntry = null;
         cachedProfessionKey = null;
-        reusableSide = new BlockPos.MutableBlockPos();
     }
 
     @Override
     public void lazyai$invalidateBlockCache(BlockPos pos) {
-        final long key = pos.asLong();
-        if (cachedBlockPos.containsKey(key)) {
-            cachedBlockPos.remove(key);
-            shouldRefreshTradingHall = true;
-        }
+        if (cachedBlockPos.remove(pos.asLong()) != null) shouldRefreshTradingHall = true;
     }
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"), cancellable = true)
     private void skipIdleTradingHallTick(ServerLevel world, CallbackInfo ci) {
+        if (randomSelectedTick == -1) randomSelectedTick = villager.getId();
         if (villager == null || !villager.isAlive() || villager.isBaby() || villager.isPanicking()) return;
         if (!isInTradingCell(villager)) return;
 
         final ResourceKey<VillagerProfession> villagerprof = getCachedProfession();
         if (villagerprof == VillagerProfession.NONE || villagerprof == VillagerProfession.NITWIT) return;
 
-        if (villager.isTrading()) return;
+        if (villager.isTrading()) {
+            if (villager.getVillagerData().profession().is(VillagerProfession.NONE)) stopTrading();
+            return;
+        }
 
         if (((villager.tickCount + randomSelectedTick) & 31) != 0) {
             final VillagerEntityAccessor accessor = (VillagerEntityAccessor) villager;
@@ -121,23 +117,21 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
                 accessor.setLastCustomer(null);
             }
 
-            if (villager.getVillagerData().profession().is(VillagerProfession.NONE) && villager.isTrading())
-                stopTrading();
-
             ci.cancel();
         }
     }
 
     @Unique
     private boolean isInTradingCell(Villager villager) {
-        final int[] cooldownList = getCooldownList();
+        final int[] cooldownList = localCooldownHelper.getCurrentCooldownList();
         final int distanceOrdinal = Lazy_ai_pixelindiedev.getDistance(villager).ordinal();
 
         if ((villager.tickCount + randomSelectedTick) % cooldownList[distanceOrdinal] != 0) return isInTradingHall;
 
         final BlockPos center = villager.blockPosition();
         //if block was changed near, or villager is no longer standing in the same spot
-        if (shouldRefreshTradingHall || lastStandingLocation != center) {
+        if (shouldRefreshTradingHall || !lastStandingLocation.equals(center)) {
+            if (!lastStandingLocation.equals(center)) cachedBlockPos.clear();
             shouldRefreshTradingHall = false;
             lastStandingLocation = center;
 
@@ -190,26 +184,11 @@ public abstract class VillagerEntityMixin implements VillagerCacheAccessor {
     @Unique
     private boolean getCachedSolidBlock(Level world, BlockPos pos) {
         final long key = pos.asLong();
-        if (cachedBlockPos.containsKey(key)) return cachedBlockPos.get(key);
-        else {
-            final BlockState state = world.getBlockState(pos);
-            final boolean isSolid = hasSolidCollision(state);
-            cachedBlockPos.put(key, isSolid);
-            return isSolid;
-        }
-    }
-
-    @Unique
-    private int[] getCooldownList() {
-        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
-        if (current != cachedOptiType) {
-            cachedOptiType = current;
-            cachedCooldownList = switch (current) {
-                case Minimal -> cooldownsMinimal;
-                case Agressive -> cooldownsAgressive;
-                case null, default -> cooldowns;
-            };
-        }
-        return cachedCooldownList;
+        final Boolean cached = cachedBlockPos.get(key);
+        if (cached != null) return cached;
+        final BlockState state = world.getBlockState(pos);
+        final Boolean isSolid = hasSolidCollision(state);
+        cachedBlockPos.put(key, isSolid);
+        return isSolid;
     }
 }

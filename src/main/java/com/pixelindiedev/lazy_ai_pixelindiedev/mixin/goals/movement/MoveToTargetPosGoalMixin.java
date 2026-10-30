@@ -6,9 +6,7 @@ package com.pixelindiedev.lazy_ai_pixelindiedev.mixin.goals.movement;
 // Licensed under the GNU GENERAL PUBLIC LICENSE
 // See the LICENSE file in the project root for full license information.
 
-import com.pixelindiedev.lazy_ai_pixelindiedev.Lazy_ai_pixelindiedev;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.DistanceType;
-import com.pixelindiedev.lazy_ai_pixelindiedev.enums.OptimalizationType;
+import com.pixelindiedev.lazy_ai_pixelindiedev.helpers.CooldownHelper;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import org.spongepowered.asm.mixin.Final;
@@ -22,58 +20,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = MoveToBlockGoal.class, priority = 1001)
 public class MoveToTargetPosGoalMixin {
+    @Final
     @Unique
-    private final static int[] cooldowns = {20, 50, 120};  // Cooldowns from close to far, in ticks
-    @Unique
-    private final static int[] cooldownsAgressive = {40, 80, 300};
-    @Unique
-    private final static int[] cooldownsMinimal = {5, 25, 80};
+    private final CooldownHelper localCooldownHelper = new CooldownHelper(
+            new int[]{20, 50, 120}, // Cooldowns from close to far, in ticks
+            new int[]{40, 80, 300},
+            new int[]{5, 25, 80}
+    );
     @Final
     @Shadow
     protected PathfinderMob mob;
-    @Unique
-    private OptimalizationType cachedOptiType;
-    @Unique
-    private int[] cachedCooldownList;
-    @Unique
-    private int cooldown = 0;
-    @Unique
-    private DistanceType previousDistanceType = DistanceType.FarRange;
-    @Unique
-    private int[] temparray;
 
     @Inject(method = "canUse", at = @At("HEAD"), cancellable = true)
     private void ThrottleSearch(CallbackInfoReturnable<Boolean> cir) {
-        final DistanceType newDistanceType = Lazy_ai_pixelindiedev.getDistance(mob);
-
-        temparray = getCooldownList();
-        if (newDistanceType != previousDistanceType) {
-            cooldown = temparray[newDistanceType.ordinal()] - (temparray[previousDistanceType.ordinal()] - cooldown);
-            previousDistanceType = newDistanceType;
-        }
-        if (cooldown > 0) {
-            cooldown--;
-            cir.setReturnValue(false);
-        } else cooldown = temparray[newDistanceType.ordinal()];
+        if (localCooldownHelper.shouldThrottle(mob)) cir.setReturnValue(false);
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void reduceTickLoad(CallbackInfo ci) {
+        int[] temparray = localCooldownHelper.getCurrentCooldownList();
         if (temparray == null || temparray[2] == 0) return;
         if ((mob.tickCount + mob.getId()) % temparray[2] != 0) ci.cancel();
-    }
-
-    @Unique
-    private int[] getCooldownList() {
-        final OptimalizationType current = Lazy_ai_pixelindiedev.getOptimalizationType();
-        if (current != cachedOptiType) {
-            cachedOptiType = current;
-            cachedCooldownList = switch (current) {
-                case Minimal -> cooldownsMinimal;
-                case Agressive -> cooldownsAgressive;
-                case null, default -> cooldowns;
-            };
-        }
-        return cachedCooldownList;
     }
 }
