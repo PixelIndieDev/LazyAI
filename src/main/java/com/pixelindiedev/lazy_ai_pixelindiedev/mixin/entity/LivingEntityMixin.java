@@ -10,7 +10,6 @@ import com.pixelindiedev.lazy_ai_pixelindiedev.mixin.integration.EntityAccessor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntityType;
@@ -158,7 +157,7 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
             final int maxTicksSkippedAdded = (mob instanceof Mob mobEntity && isMobInFight(mobEntity)) ? 0 : 2;
             if (interval != cachedInterval) {
                 cachedInterval = interval;
-                cachedBaseMovementSkip = Mth.clamp(Mth.floor(interval * 0.05f), 0, 10);
+                cachedBaseMovementSkip = Math.clamp(Mth.floor(interval * 0.05f), 0, 10);
             }
             final int maxMovementSkip = cachedBaseMovementSkip + maxTicksSkippedAdded;
 
@@ -173,7 +172,6 @@ public abstract class LivingEntityMixin implements TickCancellingAware {
 
             //swimming update
             accessor.invokeUpdateWaterState();
-            accessor.setWasEyeInWater(accessor.doIsEyeInFluid(FluidTags.WATER));
             mob.updateSwimming();
 
             // fire damaneg

@@ -22,7 +22,7 @@ public abstract class SwimGoalMixin {
             ci.cancel();
             return;
         }
-        final double fluidLevel = mob.getFluidHeight(FluidTags.WATER);
+        final double fluidLevel = mob.getFluidHeight(FluidTags.SWIMMABLE);
         if (fluidLevel < 0.3) ci.cancel();
     }
 }
