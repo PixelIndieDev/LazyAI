@@ -1,0 +1,7 @@
+run/
+.idea/
+.gradle/
+build/
+
+patch notes.txt
+illustrator/
