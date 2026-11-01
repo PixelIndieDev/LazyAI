@@ -12,6 +12,17 @@ Lazy AI dynamically reduces the frequency and precision of mob AI calculations b
 > [!WARNING]
 > Lazy AI requires [fabric api](https://modrinth.com/mod/fabric-api)
 
+## Version Compatibility
+| Minecraft Version | Status |
+| :--- | :--- |
+| **26.4...**| ![Supported](https://img.shields.io/badge/Status-Supported-green?style=flat-square) |
+| **26.3...**| ![Supported](https://img.shields.io/badge/Status-Supported-green?style=flat-square) |
+| **26.2...** | ![Out-of-Support](https://img.shields.io/badge/Status-Out--of--Support-red?style=flat-square) |
+| **26.1...** | ![Out-of-Support](https://img.shields.io/badge/Status-Out--of--Support-red?style=flat-square) |
+| **1.21...** | ![Out-of-Support](https://img.shields.io/badge/Status-Out--of--Support-red?style=flat-square) |
+| **1.20...** | ![Out-of-Support](https://img.shields.io/badge/Status-Out--of--Support-red?style=flat-square) |
+| **1.19...** | ![Out-of-Support](https://img.shields.io/badge/Status-Out--of--Support-red?style=flat-square) |
+
 ## Download
 - **[Modrinth](https://modrinth.com/mod/lazyai)**
 - **[Curseforge](https://www.curseforge.com/minecraft/mc-mods/lazyai)**
