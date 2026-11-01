@@ -7,6 +7,7 @@ on:
       - '26.1'
       - '26.2'
       - '26.4'
+      - '1.21.11'
 
 jobs:
   build:
@@ -16,11 +17,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 25
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '25'
+          java-version: '21'
           cache: 'gradle'
 
       - name: Grant execute permission for Gradle wrapper
