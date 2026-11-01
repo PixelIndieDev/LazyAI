@@ -1,7 +1,6 @@
 run/
 .idea/
 .gradle/
-gradle/
 build/
 
 patch notes.txt
