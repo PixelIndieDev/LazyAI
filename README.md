@@ -4,7 +4,7 @@
 Lazy AI optimizes Minecraft’s AI calculations to improve performance with as minimal gameplay impact as possible.
 
 ## Overview
-Lazy AI dynamically reduces the frequency and precision of mob AI calculations based on their distance from players. Mobs close to players behave normally, while those farther away update their goals, pathfinding, and other goals less often. This ensures smoother performance, especially in mob-heavy worlds.
+Lazy AI dynamically reduces the frequency and precision of mob AI calculations based on their distance from players. Mobs close to players behave normally, while those farther away update their goals, pathfinding, and other goals less often. This ensures smoother performance, especially in mob-heavy worlds. 
 
 > [!IMPORTANT]
 > Lazy AI bases its distance calculations of the simulation distance * *distance scaling* of your game
