@@ -35,7 +35,7 @@ jobs:
           BRANCH="${{ github.head_ref || github.ref_name }}"
           for f in build/libs/*.jar; do
             if [[ "$f" != *-sources.jar && "$f" != *-javadoc.jar ]]; then
-              cp "$f" final-jar/LazyAI_${BRANCH}.jar
+              cp "$f" final-jar/lazy-ai-${BRANCH}.jar
             fi
           done
 
